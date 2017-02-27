@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">\"Интеграция\" с WhatsApp</string>
+    <string name="service_description">Служба, обеспечивающая передачу сообщений между веб-сервисом и WhatsApp</string>
+</resources>

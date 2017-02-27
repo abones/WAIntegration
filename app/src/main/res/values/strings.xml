@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WhatsApp "Integration"</string>
+    <string name="service_description">This service handles message transfer between web part and WhatsApp</string>
+</resources>
