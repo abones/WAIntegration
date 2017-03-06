@@ -2,6 +2,8 @@ package com.example.accessibility;
 
 import android.accessibilityservice.AccessibilityService;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -16,6 +18,7 @@ public class MyAccessibilityService extends AccessibilityService {
     private static final String WHATSAPP_ACTIVITY = "com.whatsapp.Conversation";
     private static final String WHATSAPP_INPUT_FIELD = "com.whatsapp:id/entry";
     private static final String WHATSAPP_SEND_BUTTON = "com.whatsapp:id/send";
+    private static final String TAG = "WHATSAPP";
 
     // endregion Const
 
@@ -44,6 +47,60 @@ public class MyAccessibilityService extends AccessibilityService {
         }
     }
 
+    private String explode(CharSequence string, int times) {
+        if (times == 0)
+            return "";
+
+        return new String(new char[times]).replace("\0", string);
+    }
+
+    // requires flagReportViewIds|flagIncludeNotImportantViews
+    private void printNodeTree(AccessibilityNodeInfo nodeInfo, int level) {
+        Log.d(
+            TAG,
+            String.format(
+                "%s %s (t:\"%s\" c:\"%s\")",
+                explode("-", level),
+                nodeInfo.getViewIdResourceName(),
+                nodeInfo.getText(),
+                nodeInfo.getClassName()
+            )
+        );
+
+        int newLevel = level + 1;
+        for (int i = 0; i < nodeInfo.getChildCount(); ++i)
+            printNodeTree(nodeInfo.getChild(i), newLevel);
+    }
+
+    private void printMessages(AccessibilityNodeInfo nodeInfo) {
+        AccessibilityNodeInfo list = nodeInfo.findAccessibilityNodeInfosByViewId("android:id/list").get(
+            0);
+
+        for (int i = 0; i < list.getChildCount(); ++i) {
+            AccessibilityNodeInfo messageGroup = list.getChild(i);
+
+            if (messageGroup.getClass().isAssignableFrom(ViewGroup.class))
+                continue;
+
+            List<AccessibilityNodeInfo> messageTexts = messageGroup.findAccessibilityNodeInfosByViewId(
+                "com.whatsapp:id/message_text");
+            List<AccessibilityNodeInfo> messageDates = messageGroup.findAccessibilityNodeInfosByViewId(
+                "com.whatsapp:id/date");
+
+            if (messageTexts.isEmpty() || messageDates.isEmpty())
+                continue;
+
+            Log.d(
+                TAG,
+                String.format(
+                    "%s %s",
+                    messageDates.get(0).getText(),
+                    messageTexts.get(0).getText()
+                )
+            );
+        }
+    }
+
     // endregion Methods
 
     // region Overrides of AccessibilityService
@@ -56,8 +113,10 @@ public class MyAccessibilityService extends AccessibilityService {
         }
 
         AccessibilityNodeInfo nodeInfo = event.getSource();
-        //if (nodeInfo != null)
-        //    sendMessage(nodeInfo);
+        //printNodeTree(nodeInfo, 0);
+        if (nodeInfo != null)
+            //sendMessage(nodeInfo);
+            printMessages(nodeInfo);
 
         event.recycle();
     }
