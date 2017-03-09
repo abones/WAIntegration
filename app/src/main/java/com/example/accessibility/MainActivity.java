@@ -4,9 +4,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.accessibility.databinding.ActivityMainBinding;
@@ -41,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage() {
         serviceConnection.getService().sendMessage("Ololo");
+    }
+
+    public void setConnection() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString(MessageService.SETTINGS_CONNECTION, "localhost");
+        editor.apply();
     }
 
     private static class MyServiceConnection implements ServiceConnection {

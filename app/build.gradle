@@ -1,8 +1,24 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "me.tatarka:gradle-retrolambda:3.4.0"
+    }
+}
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.whatsapp.integration"
@@ -23,6 +39,10 @@ android {
     dataBinding {
         enabled = true
     }
+}
+
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
 }
 
 dependencies {
