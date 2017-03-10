@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.accessibility.databinding.ActivityMainBinding;
@@ -17,6 +16,7 @@ import com.example.accessibility.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private final MyServiceConnection serviceConnection;
+    private Intent serviceIntent;
 
     public MainActivity() {
         serviceConnection = new MyServiceConnection();
@@ -27,13 +27,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setActivity(this);
+        serviceIntent = new Intent(this, MessageService.class);
+        startService(serviceIntent);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        bindService(new Intent(this, MessageService.class), serviceConnection, Context.BIND_AUTO_CREATE | Context.BIND_ABOVE_CLIENT | Context.BIND_IMPORTANT);
-        }
+        bindService(
+            serviceIntent,
+            serviceConnection,
+            Context.BIND_ABOVE_CLIENT | Context.BIND_IMPORTANT
+        );
+    }
 
     @Override
     public void onStop() {
