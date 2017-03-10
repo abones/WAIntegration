@@ -3,13 +3,13 @@ package com.whatsapp.integration;
 import android.app.Activity;
 import android.app.Application;
 
-import com.rubius.androidshared.viewmodels.IApplicationViewModel;
 import com.whatsapp.integration.dagger.components.ActivityComponent;
 import com.whatsapp.integration.dagger.components.ApplicationComponent;
 import com.whatsapp.integration.dagger.components.DaggerActivityComponent;
 import com.whatsapp.integration.dagger.components.DaggerApplicationComponent;
 import com.whatsapp.integration.dagger.modules.ActivityModule;
 import com.whatsapp.integration.dagger.modules.ApplicationModule;
+import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ import javax.inject.Inject;
  */
 public class WhatsappIntegrationApplication extends Application {
     @Inject
-    protected IApplicationViewModel viewModel;
+    protected IWhatsappIntegrationApplicationViewModel viewModel;
     private ApplicationComponent applicationComponent;
 
     private final Map<Class<? extends Activity>, ActivityComponent> activityClassComponents = new HashMap<>();
@@ -39,6 +39,7 @@ public class WhatsappIntegrationApplication extends Application {
         ActivityComponent result = activityClassComponents.get(activityClass);
 
         if (result == null) {
+            //noinspection LawOfDemeter
             result = DaggerActivityComponent.builder()
                 .applicationComponent(applicationComponent)
                 .activityModule(new ActivityModule(activity))

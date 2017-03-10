@@ -11,7 +11,7 @@ import javax.inject.Inject;
 /**
  *
  */
-public class WhatsappIntegrationApplicationViewModel extends ApplicationViewModel {
+public class WhatsappIntegrationApplicationViewModel extends ApplicationViewModel implements IWhatsappIntegrationApplicationViewModel {
     @Inject
     public WhatsappIntegrationApplicationViewModel(@ApplicationContext @NonNull IContextWrapper contextWrapper) {
         super(contextWrapper);

@@ -13,13 +13,13 @@ import javax.inject.Inject;
 /**
  *
  */
-public class MainActivityViewModel extends ActivityViewModel<WhatsappIntegrationApplicationViewModel, MainActivity> implements
+public class MainActivityViewModel extends ActivityViewModel<IWhatsappIntegrationApplicationViewModel, MainActivity> implements
     IMainActivityViewModel {
 
     @Inject
     public MainActivityViewModel(
         @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
-        @NonNull WhatsappIntegrationApplicationViewModel applicationViewModel
+        @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel
     ) {
         super(contextWrapper, applicationViewModel);
     }

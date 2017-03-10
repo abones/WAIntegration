@@ -8,9 +8,9 @@ import com.whatsapp.integration.R;
 import com.whatsapp.integration.WhatsappIntegrationApplication;
 import com.whatsapp.integration.dagger.components.ActivityComponent;
 import com.whatsapp.integration.databinding.ActivityMainBinding;
-import com.whatsapp.integration.viewmodels.MainActivityViewModel;
+import com.whatsapp.integration.viewmodels.IMainActivityViewModel;
 
-public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationApplication, MainActivityViewModel, ActivityMainBinding> implements
+public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationApplication, IMainActivityViewModel, ActivityMainBinding> implements
     IActivityView {
     @Override
     public String getPrintPrefix() {
