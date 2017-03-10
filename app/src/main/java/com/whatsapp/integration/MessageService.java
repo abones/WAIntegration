@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.whatsapp.integration;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -36,7 +36,7 @@ public class MessageService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this)
-            .setSmallIcon(R.drawable.whaticon)
+            .setSmallIcon(R.drawable.whaticon_holes)
             .setContentText("Service running")
             .setWhen(new Date().getTime())
             .setContentTitle("Running service")

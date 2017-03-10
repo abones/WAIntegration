@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.whatsapp.integration;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.accessibility.databinding.ActivityMainBinding;
+import com.whatsapp.integration.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

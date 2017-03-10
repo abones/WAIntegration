@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.whatsapp.integration;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

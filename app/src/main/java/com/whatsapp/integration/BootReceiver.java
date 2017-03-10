@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.whatsapp.integration;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,12 +1,14 @@
-package com.example.accessibility;
+package com.whatsapp.integration;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +17,14 @@ import java.util.List;
 public class MyAccessibilityService extends AccessibilityService {
     // region Const
 
+    private static final int MAX_SCROLLS = 30;
+
     private static final String WHATSAPP_ACTIVITY = "com.whatsapp.Conversation";
     private static final String WHATSAPP_INPUT_FIELD = "com.whatsapp:id/entry";
     private static final String WHATSAPP_SEND_BUTTON = "com.whatsapp:id/send";
     private static final String TAG = "WHATSAPP";
+    private static final String BROADCAST_NOTIFICATION = "com.whatsapp.integration.BROADCAST_MESSAGES";
+    private static final String EXTRA_MESSAGES = "com.whatsapp.integration.EXTRA_MESSAGES";
 
     // endregion Const
 
@@ -72,12 +78,30 @@ public class MyAccessibilityService extends AccessibilityService {
             printNodeTree(nodeInfo.getChild(i), newLevel);
     }
 
-    private void printMessages(AccessibilityNodeInfo nodeInfo) {
-        AccessibilityNodeInfo list = nodeInfo.findAccessibilityNodeInfosByViewId("android:id/list").get(
+    private int minValue(int a, int b) {
+        return a < b ? a : b;
+    }
+
+    private void getMessages(AccessibilityNodeInfo nodeInfo, List<MessageInfo> target) {
+        AccessibilityNodeInfo listNode = nodeInfo.findAccessibilityNodeInfosByViewId(
+            "android:id/list").get(
             0);
 
-        for (int i = 0; i < list.getChildCount(); ++i) {
-            AccessibilityNodeInfo messageGroup = list.getChild(i);
+        AccessibilityNodeInfo.CollectionInfo collectionInfo = listNode.getCollectionInfo();
+        int scrollCount = minValue(MAX_SCROLLS, collectionInfo.getRowCount() / 10 + 1);
+
+        for (int i = 0; i < scrollCount * 2; ++i) {
+            listNode.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD.getId());
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+
+        for (int j = 0; j < listNode.getChildCount(); ++j) {
+            AccessibilityNodeInfo messageGroup = listNode.getChild(j);
 
             if (messageGroup.getClass().isAssignableFrom(ViewGroup.class))
                 continue;
@@ -90,14 +114,7 @@ public class MyAccessibilityService extends AccessibilityService {
             if (messageTexts.isEmpty() || messageDates.isEmpty())
                 continue;
 
-            Log.d(
-                TAG,
-                String.format(
-                    "%s %s",
-                    messageDates.get(0).getText(),
-                    messageTexts.get(0).getText()
-                )
-            );
+            target.add(new MessageInfo(messageDates.get(0).getText().toString(), messageTexts.get(0).getText().toString()));
         }
     }
 
@@ -108,15 +125,20 @@ public class MyAccessibilityService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!WHATSAPP_ACTIVITY.equals(event.getClassName())) {
-            event.recycle();
+            //event.recycle();
             return;
         }
 
         AccessibilityNodeInfo nodeInfo = event.getSource();
         //printNodeTree(nodeInfo, 0);
-        if (nodeInfo != null)
+        ArrayList<MessageInfo> messages = new ArrayList<>();
+        if (nodeInfo != null) {
             //sendMessage(nodeInfo);
-            printMessages(nodeInfo);
+            getMessages(nodeInfo, messages);
+            Intent broadcastIntent = new Intent(BROADCAST_NOTIFICATION);
+            broadcastIntent.putParcelableArrayListExtra(EXTRA_MESSAGES, messages);
+            sendBroadcast(broadcastIntent);
+        }
 
         event.recycle();
     }
