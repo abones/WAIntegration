@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="activity"
-            type="com.whatsapp.integration.activities.MainActivity"/>
+            name="viewModel"
+            type="com.whatsapp.integration.viewmodels.MainActivityViewModel"/>
     </data>
 
     <LinearLayout
@@ -19,13 +19,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Send message"
-            android:onClick="@{() -> activity.sendMessage()}"/>
+            android:onClick="@{() -> viewModel.sendMessage()}"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Set connection"
-            android:onClick="@{() -> activity.setConnection()}"/>
+            android:onClick="@{() -> viewModel.setConnection()}"/>
 
     </LinearLayout>
 </layout>
