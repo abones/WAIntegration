@@ -6,14 +6,14 @@
     <data>
         <variable
             name="activity"
-            type="com.whatsapp.integration.MainActivity"/>
+            type="com.whatsapp.integration.activities.MainActivity"/>
     </data>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.whatsapp.integration.MainActivity">
+        tools:context="com.whatsapp.integration.activities.MainActivity">
 
         <Button
             android:layout_width="match_parent"

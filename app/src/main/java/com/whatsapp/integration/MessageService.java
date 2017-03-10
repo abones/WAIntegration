@@ -17,6 +17,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.whatsapp.integration.activities.MainActivity;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Queue;
@@ -144,7 +146,7 @@ public class MessageService extends Service {
         return messageServiceBinder;
     }
 
-    class Binder extends android.os.Binder {
+    public class Binder extends android.os.Binder {
         public void sendMessage(QueuedMessage message) {
             messages.add(message);
             if (isConnected)

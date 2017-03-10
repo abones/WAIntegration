@@ -1,4 +1,4 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.activities;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.whatsapp.integration.MessageService;
+import com.whatsapp.integration.QueuedMessage;
+import com.whatsapp.integration.R;
 import com.whatsapp.integration.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
