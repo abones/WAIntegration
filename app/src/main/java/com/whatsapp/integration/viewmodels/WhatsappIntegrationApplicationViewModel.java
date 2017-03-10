@@ -3,13 +3,17 @@ package com.whatsapp.integration.viewmodels;
 import android.support.annotation.NonNull;
 
 import com.rubius.androidshared.abstraction.IContextWrapper;
+import com.rubius.androidshared.dagger.qualifiers.ApplicationContext;
 import com.rubius.androidshared.viewmodels.ApplicationViewModel;
+
+import javax.inject.Inject;
 
 /**
  *
  */
-class WhatsappIntegrationApplicationViewModel extends ApplicationViewModel {
-    public WhatsappIntegrationApplicationViewModel(@NonNull IContextWrapper contextWrapper) {
+public class WhatsappIntegrationApplicationViewModel extends ApplicationViewModel {
+    @Inject
+    public WhatsappIntegrationApplicationViewModel(@ApplicationContext @NonNull IContextWrapper contextWrapper) {
         super(contextWrapper);
     }
 }

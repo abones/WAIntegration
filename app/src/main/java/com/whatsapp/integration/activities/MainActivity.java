@@ -6,6 +6,7 @@ import com.rubius.androidshared.viewmodels.IActivityView;
 import com.rubius.androidshared.viewmodels.IActivityViewModel;
 import com.whatsapp.integration.R;
 import com.whatsapp.integration.WhatsappIntegrationApplication;
+import com.whatsapp.integration.dagger.components.ActivityComponent;
 import com.whatsapp.integration.databinding.ActivityMainBinding;
 import com.whatsapp.integration.viewmodels.MainActivityViewModel;
 
@@ -18,13 +19,13 @@ public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationAppli
 
     @Override
     public void releaseViewModel() {
-        //getTypedApplication().releaseViewModel(this.getClass());
+        getTypedApplication().releaseActivityComponent(this.getClass());
     }
 
     @Override
     public IActivityViewModel getViewModel() {
-        //ActivityComponent activityComponent = getTypedApplication().getActivityComponent();
-        //activityComponent.inject(this);
+        ActivityComponent activityComponent = getTypedApplication().getActivityComponent(this);
+        activityComponent.inject(this);
         return viewModel;
     }
 
