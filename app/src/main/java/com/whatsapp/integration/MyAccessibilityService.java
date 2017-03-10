@@ -23,8 +23,8 @@ public class MyAccessibilityService extends AccessibilityService {
     private static final String WHATSAPP_INPUT_FIELD = "com.whatsapp:id/entry";
     private static final String WHATSAPP_SEND_BUTTON = "com.whatsapp:id/send";
     private static final String TAG = "WHATSAPP";
-    private static final String BROADCAST_NOTIFICATION = "com.whatsapp.integration.BROADCAST_MESSAGES";
-    private static final String EXTRA_MESSAGES = "com.whatsapp.integration.EXTRA_MESSAGES";
+    public static final String ACTION_RECEIVE_MESSAGES = "com.whatsapp.integration.BROADCAST_MESSAGES";
+    public static final String EXTRA_MESSAGES = "com.whatsapp.integration.EXTRA_MESSAGES";
 
     // endregion Const
 
@@ -135,7 +135,7 @@ public class MyAccessibilityService extends AccessibilityService {
         if (nodeInfo != null) {
             //sendMessage(nodeInfo);
             getMessages(nodeInfo, messages);
-            Intent broadcastIntent = new Intent(BROADCAST_NOTIFICATION);
+            Intent broadcastIntent = new Intent(ACTION_RECEIVE_MESSAGES);
             broadcastIntent.putParcelableArrayListExtra(EXTRA_MESSAGES, messages);
             sendBroadcast(broadcastIntent);
         }
