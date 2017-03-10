@@ -13,7 +13,9 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -61,9 +63,14 @@ public class MyAccessibilityService extends AccessibilityService {
         }
     }
 
-    private synchronized void sendMessages(AccessibilityNodeInfo nodeInfo) {
-        while (!queuedMessages.isEmpty())
-            sendMessage(nodeInfo, queuedMessages.remove());
+    private synchronized void sendMessages(AccessibilityNodeInfo nodeInfo, String recipient) {
+        if (!recipients.containsKey(recipient))
+            return;
+
+        Queue<QueuedMessage> queue = recipients.get(recipient);
+
+        while (!queue.isEmpty())
+            sendMessage(nodeInfo, queue.remove().getMessage());
     }
 
     private String explode(CharSequence string, int times) {
@@ -138,7 +145,19 @@ public class MyAccessibilityService extends AccessibilityService {
 
     // region Overrides of AccessibilityService
 
-    private final Queue<String> queuedMessages = new ConcurrentLinkedQueue<>();
+    private final Map<String , Queue<QueuedMessage>> recipients = new ConcurrentHashMap<>();
+
+    private Queue<QueuedMessage> getRecipientQueue(String recipient) {
+        Queue<QueuedMessage> result;
+        if (recipients.containsKey(recipient))
+            result = recipients.get(recipient);
+        else {
+            result = new ConcurrentLinkedQueue<>();
+            recipients.put(recipient, result);
+        }
+
+        return result;
+    }
 
     @Override
     public void onCreate() {
@@ -146,18 +165,16 @@ public class MyAccessibilityService extends AccessibilityService {
         sendMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                queuedMessages.add(intent.getStringExtra(EXTRA_MESSAGE));
+                QueuedMessage message = intent.getParcelableExtra(EXTRA_MESSAGE);
+
+                Queue<QueuedMessage> queue = getRecipientQueue(message.getRecipient());
+
+                queue.add(message);
                 // TODO: start whatsapp app
             }
         };
         IntentFilter intentFilter = new IntentFilter(ACTION_SEND_MESSAGE);
         registerReceiver(sendMessageReceiver, intentFilter);
-    }
-
-    @Override
-    protected void onServiceConnected() {
-        super.onServiceConnected();
-
     }
 
     @Override
@@ -183,10 +200,14 @@ public class MyAccessibilityService extends AccessibilityService {
             broadcastIntent.putParcelableArrayListExtra(EXTRA_MESSAGES, messages);
             sendBroadcast(broadcastIntent);
 
-            sendMessages(nodeInfo);
+            sendMessages(nodeInfo, getRecipient(nodeInfo));
         }
 
         event.recycle();
+    }
+
+    private String getRecipient(AccessibilityNodeInfo nodeInfo) {
+        return "+79138539660";
     }
 
     @Override

@@ -19,6 +19,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static com.whatsapp.integration.MyAccessibilityService.ACTION_RECEIVE_MESSAGES;
@@ -48,26 +50,16 @@ public class MessageService extends Service {
         }
     }
 
-    private class TheThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            try {
-                Thread.sleep(5000);
-            } catch(Exception e) {
-
-            }
-
-            Intent broadcastIntent = new Intent(MyAccessibilityService.ACTION_SEND_MESSAGE);
-            broadcastIntent.putExtra(MyAccessibilityService.EXTRA_MESSAGE, "Some message");
-            sendBroadcast(broadcastIntent);
-        }
-    }
+    private boolean isConnected;
 
     private void setServiceConnected(boolean isConnected) {
-        if (isConnected) {
-            new TheThread().run();
-        }
+        if (this.isConnected == isConnected)
+            return;
+
+        this.isConnected = isConnected;
+
+        if (isConnected)
+            sendPendingMessages();
     }
 
     @Override
@@ -134,6 +126,18 @@ public class MessageService extends Service {
         setConnection(preferences.getString(SETTINGS_CONNECTION, null));
     }
 
+    private final Queue<QueuedMessage> messages = new ConcurrentLinkedQueue<>();
+
+    private synchronized void sendPendingMessages() {
+        while (!messages.isEmpty()) {
+            QueuedMessage message = messages.remove();
+
+            Intent broadcastIntent = new Intent(MyAccessibilityService.ACTION_SEND_MESSAGE);
+            broadcastIntent.putExtra(MyAccessibilityService.EXTRA_MESSAGE, message);
+            sendBroadcast(broadcastIntent);
+        }
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -141,8 +145,10 @@ public class MessageService extends Service {
     }
 
     class Binder extends android.os.Binder {
-        public void sendMessage(String message) {
-            Log.d("FROMSERVICE", message + " to " + connection);
+        public void sendMessage(QueuedMessage message) {
+            messages.add(message);
+            if (isConnected)
+                sendPendingMessages();
         }
     }
 }

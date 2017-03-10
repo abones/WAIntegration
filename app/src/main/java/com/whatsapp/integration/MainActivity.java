@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage() {
-        serviceConnection.getService().sendMessage("Ololo");
+        serviceConnection.getService().sendMessage(new QueuedMessage("Ololo", "+79138539660"));
     }
 
     public void setConnection() {
