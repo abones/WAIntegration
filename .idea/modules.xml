@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Accessibility.iml" filepath="$PROJECT_DIR$/Accessibility.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidshared/androidcommon/androidcommon.iml" filepath="$PROJECT_DIR$/androidshared/androidcommon/androidcommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidshared/androidshared.iml" filepath="$PROJECT_DIR$/androidshared/androidshared.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

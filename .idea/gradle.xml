@@ -8,6 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/androidshared" />
+            <option value="$PROJECT_DIR$/androidshared/androidcommon" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
