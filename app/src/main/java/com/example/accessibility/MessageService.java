@@ -20,6 +20,7 @@ import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
  */
 public class MessageService extends Service {
     public static final String SETTINGS_CONNECTION = "com.example.accessibility.CONNECTION";
+    public static final String SETTINGS_ENABLED = "com.example.accessibility.ENABLED";
     private static final int NOTIFICATION_ID = 1;
 
     private final IBinder messageServiceBinder = new Binder();

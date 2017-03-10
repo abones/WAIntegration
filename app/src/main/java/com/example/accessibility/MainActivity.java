@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         binding.setActivity(this);
         serviceIntent = new Intent(this, MessageService.class);
         startService(serviceIntent);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putBoolean(MessageService.SETTINGS_ENABLED, true).apply();
     }
 
     @Override
