@@ -1,7 +1,10 @@
 package com.whatsapp.integration;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -10,6 +13,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Accessibility service that handles interactions with WhatsApp
@@ -23,14 +28,17 @@ public class MyAccessibilityService extends AccessibilityService {
     private static final String WHATSAPP_INPUT_FIELD = "com.whatsapp:id/entry";
     private static final String WHATSAPP_SEND_BUTTON = "com.whatsapp:id/send";
     private static final String TAG = "WHATSAPP";
-    public static final String ACTION_RECEIVE_MESSAGES = "com.whatsapp.integration.BROADCAST_MESSAGES";
+    public static final String ACTION_RECEIVE_MESSAGES = "com.whatsapp.integration.ACTION_RECEIVE_MESSAGES";
+    public static final String ACTION_SEND_MESSAGE = "com.whatsapp.integration.ACTION_SEND_MESSAGE";
     public static final String EXTRA_MESSAGES = "com.whatsapp.integration.EXTRA_MESSAGES";
+    public static final String EXTRA_MESSAGE = "com.whatsapp.integration.EXTRA_MESSAGE";
+    private BroadcastReceiver sendMessageReceiver;
 
     // endregion Const
 
     // region Methods
 
-    private void sendMessage(AccessibilityNodeInfo nodeInfo) {
+    private void sendMessage(AccessibilityNodeInfo nodeInfo, String message) {
         List<AccessibilityNodeInfo> inputs = nodeInfo
             .findAccessibilityNodeInfosByViewId(WHATSAPP_INPUT_FIELD);
 
@@ -40,7 +48,7 @@ public class MyAccessibilityService extends AccessibilityService {
         Bundle arguments = new Bundle();
         arguments.putCharSequence(
             AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
-            "Hello, this is a message"
+            message
         );
         for (AccessibilityNodeInfo node : inputs) {
             node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
@@ -51,6 +59,11 @@ public class MyAccessibilityService extends AccessibilityService {
         for (AccessibilityNodeInfo node : buttons) {
             node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
         }
+    }
+
+    private synchronized void sendMessages(AccessibilityNodeInfo nodeInfo) {
+        while (!queuedMessages.isEmpty())
+            sendMessage(nodeInfo, queuedMessages.remove());
     }
 
     private String explode(CharSequence string, int times) {
@@ -114,13 +127,44 @@ public class MyAccessibilityService extends AccessibilityService {
             if (messageTexts.isEmpty() || messageDates.isEmpty())
                 continue;
 
-            target.add(new MessageInfo(messageDates.get(0).getText().toString(), messageTexts.get(0).getText().toString()));
+            target.add(new MessageInfo(
+                messageDates.get(0).getText().toString(),
+                messageTexts.get(0).getText().toString()
+            ));
         }
     }
 
     // endregion Methods
 
     // region Overrides of AccessibilityService
+
+    private final Queue<String> queuedMessages = new ConcurrentLinkedQueue<>();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sendMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                queuedMessages.add(intent.getStringExtra(EXTRA_MESSAGE));
+                // TODO: start whatsapp app
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(ACTION_SEND_MESSAGE);
+        registerReceiver(sendMessageReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onServiceConnected() {
+        super.onServiceConnected();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(sendMessageReceiver);
+    }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -138,6 +182,8 @@ public class MyAccessibilityService extends AccessibilityService {
             Intent broadcastIntent = new Intent(ACTION_RECEIVE_MESSAGES);
             broadcastIntent.putParcelableArrayListExtra(EXTRA_MESSAGES, messages);
             sendBroadcast(broadcastIntent);
+
+            sendMessages(nodeInfo);
         }
 
         event.recycle();

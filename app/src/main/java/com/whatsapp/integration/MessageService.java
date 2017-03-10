@@ -5,9 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static com.whatsapp.integration.MyAccessibilityService.ACTION_RECEIVE_MESSAGES;
 
 /**
  *
@@ -31,6 +34,41 @@ public class MessageService extends Service {
     private final IBinder messageServiceBinder = new Binder();
     private final SharedPreferences.OnSharedPreferenceChangeListener onConnectionChangedListener = this::onConnectionChanged;
     private BroadcastReceiver messagesReceiver;
+    private WhatsappInterfaceConnection whatsappInterfaceConnection;
+
+    private class WhatsappInterfaceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            setServiceConnected(true);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            setServiceConnected(true);
+        }
+    }
+
+    private class TheThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                Thread.sleep(5000);
+            } catch(Exception e) {
+
+            }
+
+            Intent broadcastIntent = new Intent(MyAccessibilityService.ACTION_SEND_MESSAGE);
+            broadcastIntent.putExtra(MyAccessibilityService.EXTRA_MESSAGE, "Some message");
+            sendBroadcast(broadcastIntent);
+        }
+    }
+
+    private void setServiceConnected(boolean isConnected) {
+        if (isConnected) {
+            new TheThread().run();
+        }
+    }
 
     @Override
     public void onCreate() {
@@ -51,8 +89,11 @@ public class MessageService extends Service {
                 mNotificationManager.notify(NOTIFICATION_ID, createNotification("Reived messages: " + messages.size()));
             }
         };
-        IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
+        IntentFilter intentFilter = new IntentFilter(ACTION_RECEIVE_MESSAGES);
         registerReceiver(messagesReceiver, intentFilter);
+
+        whatsappInterfaceConnection = new WhatsappInterfaceConnection();
+        bindService(new Intent(this, MyAccessibilityService.class), whatsappInterfaceConnection, 0);
     }
 
     private Notification createNotification(String title) {
@@ -73,6 +114,7 @@ public class MessageService extends Service {
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(onConnectionChangedListener);
         unregisterReceiver(messagesReceiver);
+        unbindService(whatsappInterfaceConnection);
         stopForeground(true);
     }
 
