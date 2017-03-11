@@ -1,5 +1,8 @@
 package com.whatsapp.integration.activities;
 
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+
 import com.android.databinding.library.baseAdapters.BR;
 import com.rubius.androidshared.activities.AppCompatActivityBase;
 import com.rubius.androidshared.viewmodels.IActivityView;
@@ -12,6 +15,20 @@ import com.whatsapp.integration.viewmodels.IMainActivityViewModel;
 
 public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationApplication, IMainActivityViewModel, ActivityMainBinding> implements
     IActivityView {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ActivityMainBinding binding = getBinding();
+
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
+
+        //CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbar;
+        //collapsingToolbarLayout.setTitle("Ololo");
+    }
+
     @Override
     public String getPrintPrefix() {
         return "MainActivity";
