@@ -58,4 +58,6 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.ext.versionDaggerCompiler"
     compile "com.google.dagger:dagger:$rootProject.ext.versionDagger"
     compile project(path: ':androidshared:androidcommon')
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 }
