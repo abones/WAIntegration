@@ -38,11 +38,11 @@
                 android:resource="@xml/accessibility" />
         </service>
         <service
-            android:name="com.whatsapp.integration.MessageService"
+            android:name=".MessageService"
             android:enabled="true" />
 
         <receiver
-            android:name="com.whatsapp.integration.BootReceiver"
+            android:name=".BootReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -5,6 +5,7 @@ import com.whatsapp.integration.WhatsappIntegrationApplication;
 import com.whatsapp.integration.dagger.modules.ApplicationModule;
 import com.whatsapp.integration.dagger.modules.ApplicationScopeBinds;
 import com.whatsapp.integration.dagger.modules.DatabaseModule;
+import com.whatsapp.integration.service.IMessageServiceManager;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
 
 import dagger.Component;
@@ -18,4 +19,5 @@ public interface ApplicationComponent {
     void inject(WhatsappIntegrationApplication application);
 
     IWhatsappIntegrationApplicationViewModel getApplicationViewModel();
+    IMessageServiceManager getMessageServiceManager();
 }

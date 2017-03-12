@@ -27,4 +27,10 @@ public class ApplicationModule {
     public IContextWrapper provideApplicationContextWrapper() {
         return new CustomContextWrapper(application);
     }
+
+    //@Provides
+    //@ApplicationScope
+    //public IMessageServiceManager provideMessageServiceManager() {
+    //    return new MessageServiceManager();
+    //}
 }

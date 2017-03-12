@@ -31,8 +31,8 @@ import static com.whatsapp.integration.MyAccessibilityService.ACTION_RECEIVE_MES
  *
  */
 public class MessageService extends Service {
-    public static final String SETTINGS_CONNECTION = "com.example.accessibility.CONNECTION";
-    public static final String SETTINGS_ENABLED = "com.example.accessibility.ENABLED";
+    public static final String SETTINGS_CONNECTION = "com.whatsapp.integration.CONNECTION";
+    public static final String SETTINGS_ENABLED = "com.whatsapp.integration.ENABLED";
     private static final int NOTIFICATION_ID = 1;
 
     private final IBinder messageServiceBinder = new Binder();
