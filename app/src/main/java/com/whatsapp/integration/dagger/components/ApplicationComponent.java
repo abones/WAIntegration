@@ -6,6 +6,7 @@ import com.whatsapp.integration.dagger.modules.ApplicationModule;
 import com.whatsapp.integration.dagger.modules.ApplicationScopeBinds;
 import com.whatsapp.integration.dagger.modules.DatabaseModule;
 import com.whatsapp.integration.misc.IPreferences;
+import com.whatsapp.integration.model.IRetrofitWrapper;
 import com.whatsapp.integration.service.IMessageServiceManager;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
 
@@ -22,4 +23,5 @@ public interface ApplicationComponent {
     IWhatsappIntegrationApplicationViewModel getApplicationViewModel();
     IMessageServiceManager getMessageServiceManager();
     IPreferences getPreferences();
+    IRetrofitWrapper getRetrofitWrapper();
 }

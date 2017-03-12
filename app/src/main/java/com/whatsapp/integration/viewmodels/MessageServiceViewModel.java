@@ -21,6 +21,7 @@ import com.rubius.androidshared.viewmodels.ViewModelBase;
 import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.misc.IPreferences;
+import com.whatsapp.integration.model.IRetrofitWrapper;
 import com.whatsapp.integration.model.MessageInfo;
 import com.whatsapp.integration.model.QueuedMessage;
 import com.whatsapp.integration.service.MyAccessibilityService;
@@ -47,6 +48,7 @@ public class MessageServiceViewModel
     private final IPreferences preferences;
     private final SharedPreferences.OnSharedPreferenceChangeListener onConnectionChangedListener = this::onConnectionChanged;
     private final IBinder messageServiceBinder = new Binder();
+    private final IRetrofitWrapper retrofitWrapper;
 
     private BroadcastReceiver messagesReceiver;
     private WhatsappInterfaceConnection whatsappInterfaceConnection;
@@ -56,10 +58,12 @@ public class MessageServiceViewModel
     @Inject
     public MessageServiceViewModel(
             @ServiceContext @NonNull IServiceContextWrapper contextWrapper,
-            IPreferences preferences) {
+            IPreferences preferences,
+            IRetrofitWrapper retrofitWrapper) {
         super(contextWrapper);
         this.serviceContextWrapper = contextWrapper;
         this.preferences = preferences;
+        this.retrofitWrapper = retrofitWrapper;
     }
 
     // region Connection
@@ -68,6 +72,7 @@ public class MessageServiceViewModel
 
     private void setConnection(String connection) {
         this.connection = connection;
+        retrofitWrapper.setConnection(connection);
     }
 
     private void onConnectionChanged(SharedPreferences sharedPreferences, String settings) {
