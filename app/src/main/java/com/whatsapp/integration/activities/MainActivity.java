@@ -97,22 +97,4 @@ public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationAppli
 //        editor.putString(MessageService.SETTINGS_CONNECTION, "localhost");
 //        editor.apply();
 //    }
-
-//    private static class MyServiceConnection implements ServiceConnection {
-//        private MessageService.Binder service;
-//
-//        public MessageService.Binder getService() {
-//            return service;
-//        }
-//
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            this.service = (MessageService.Binder) service;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            this.service = null;
-//        }
-//    }
 }

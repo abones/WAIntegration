@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 
 import com.rubius.androidshared.abstraction.IServiceContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ServiceContext;
+import com.rubius.androidshared.exceptions.NotImplementedException;
 import com.rubius.androidshared.viewmodels.IView;
 import com.rubius.androidshared.viewmodels.ViewModelBase;
 import com.whatsapp.integration.R;
@@ -24,14 +25,20 @@ import com.whatsapp.integration.misc.IPreferences;
 import com.whatsapp.integration.model.IRetrofitWrapper;
 import com.whatsapp.integration.model.MessageInfo;
 import com.whatsapp.integration.model.QueuedMessage;
+import com.whatsapp.integration.model.WhatMessage;
 import com.whatsapp.integration.service.MyAccessibilityService;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
@@ -197,6 +204,23 @@ public class MessageServiceViewModel
             messages.add(message);
             if (isServiceConnected)
                 sendPendingMessages();
+        }
+
+        public void getMessages() {
+            Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages();
+
+            call.enqueue(new Callback<List<WhatMessage>>() {
+                @Override
+                public void onResponse(
+                        Call<List<WhatMessage>> call, Response<List<WhatMessage>> response) {
+                    List<WhatMessage> messages = response.body();
+                }
+
+                @Override
+                public void onFailure(Call<List<WhatMessage>> call, Throwable t) {
+                    throw new NotImplementedException();
+                }
+            });
         }
     }
 

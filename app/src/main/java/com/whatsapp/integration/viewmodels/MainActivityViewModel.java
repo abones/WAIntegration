@@ -1,9 +1,12 @@
 package com.whatsapp.integration.viewmodels;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.databinding.Bindable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,13 +16,13 @@ import com.rubius.androidshared.abstraction.IActivityContextWrapper;
 import com.rubius.androidshared.binding.RecyclerBindingAdapter;
 import com.rubius.androidshared.binding.RecyclerConfiguration;
 import com.rubius.androidshared.dagger.qualifiers.ActivityContext;
-import com.rubius.androidshared.exceptions.NotImplementedException;
 import com.rubius.androidshared.viewmodels.ActivityViewModel;
 import com.whatsapp.integration.BR;
 import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.misc.IPreferences;
 import com.whatsapp.integration.service.IMessageServiceManager;
+import com.whatsapp.integration.service.MessageService;
 
 import javax.inject.Inject;
 
@@ -34,6 +37,8 @@ public class MainActivityViewModel
     private final IMessageServiceManager messageServiceManager;
     private final IPreferences preferences;
     private RecyclerBindingAdapter<String> messagesAdapter;
+
+    private final MessageServiceConnection messageServiceConnection = new MessageServiceConnection();
 
     @Inject
     public MainActivityViewModel(
@@ -62,6 +67,13 @@ public class MainActivityViewModel
     public void onResume() {
         super.onResume();
         recyclerConfiguration.setLayoutManager(contextWrapper.createLinearLayoutManager());
+        contextWrapper.bindService(MessageService.class, messageServiceConnection, 0);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        contextWrapper.unbindService(messageServiceConnection);
     }
 
     @Override
@@ -176,7 +188,30 @@ public class MainActivityViewModel
         dialogBuilder.show();
     }
 
-    public void sendMessage() {
-        throw new NotImplementedException();
+    public void getMessages() {
+        MessageServiceViewModel.Binder service = messageServiceConnection.getService();
+
+        if (service == null)
+            return;
+
+        service.getMessages();
+    }
+
+    private static class MessageServiceConnection implements ServiceConnection {
+        private MessageServiceViewModel.Binder service;
+
+        public MessageServiceViewModel.Binder getService() {
+            return service;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            this.service = (MessageServiceViewModel.Binder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            this.service = null;
+        }
     }
 }
