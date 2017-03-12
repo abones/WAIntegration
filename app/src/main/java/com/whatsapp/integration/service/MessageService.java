@@ -17,15 +17,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.whatsapp.integration.R;
+import com.whatsapp.integration.WhatsappIntegrationApplication;
+import com.whatsapp.integration.activities.MainActivity;
+import com.whatsapp.integration.dagger.components.ServiceComponent;
 import com.whatsapp.integration.model.MessageInfo;
 import com.whatsapp.integration.model.QueuedMessage;
-import com.whatsapp.integration.R;
-import com.whatsapp.integration.activities.MainActivity;
+import com.whatsapp.integration.viewmodels.IMessageServiceViewModel;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.inject.Inject;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
@@ -42,6 +47,9 @@ public class MessageService extends Service {
     private BroadcastReceiver messagesReceiver;
     private WhatsappInterfaceConnection whatsappInterfaceConnection;
 
+    @Inject
+    protected IMessageServiceViewModel viewModel;
+
     private class WhatsappInterfaceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -53,6 +61,8 @@ public class MessageService extends Service {
             setServiceConnected(true);
         }
     }
+
+    // region isConnected
 
     private boolean isConnected;
 
@@ -66,9 +76,19 @@ public class MessageService extends Service {
             sendPendingMessages();
     }
 
+    // endregion isConnected
+
+    // region Overrides of Service
+
     @Override
     public void onCreate() {
         super.onCreate();
+        WhatsappIntegrationApplication application = (WhatsappIntegrationApplication) getApplicationContext();
+        ServiceComponent serviceComponent = application.getServiceComponent(this);
+        serviceComponent.inject(this);
+
+        viewModel.onCreate(null, null);
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(onConnectionChangedListener);
         updateConnection(preferences);
@@ -82,7 +102,7 @@ public class MessageService extends Service {
                 ArrayList<MessageInfo> messages = intent.getParcelableArrayListExtra(MyAccessibilityService.EXTRA_MESSAGES);
 
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(NOTIFICATION_ID, createNotification("Reived messages: " + messages.size()));
+                mNotificationManager.notify(NOTIFICATION_ID, createNotification("Received messages: " + messages.size()));
             }
         };
         IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
@@ -108,11 +128,15 @@ public class MessageService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        viewModel.onDestroy();
+
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(onConnectionChangedListener);
         unregisterReceiver(messagesReceiver);
         unbindService(whatsappInterfaceConnection);
         stopForeground(true);
     }
+
+    // endregion Overrides of Service
 
     private void onConnectionChanged(SharedPreferences sharedPreferences, String settings) {
         if (SETTINGS_CONNECTION.equals(settings))

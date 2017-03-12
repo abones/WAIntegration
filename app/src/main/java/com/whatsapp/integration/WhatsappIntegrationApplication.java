@@ -2,14 +2,17 @@ package com.whatsapp.integration;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.BroadcastReceiver;
+import android.app.Service;
+import android.content.Context;
 
 import com.whatsapp.integration.dagger.components.ActivityComponent;
 import com.whatsapp.integration.dagger.components.ApplicationComponent;
 import com.whatsapp.integration.dagger.components.DaggerActivityComponent;
 import com.whatsapp.integration.dagger.components.DaggerApplicationComponent;
 import com.whatsapp.integration.dagger.components.DaggerReceiverComponent;
+import com.whatsapp.integration.dagger.components.DaggerServiceComponent;
 import com.whatsapp.integration.dagger.components.ReceiverComponent;
+import com.whatsapp.integration.dagger.components.ServiceComponent;
 import com.whatsapp.integration.dagger.modules.ActivityModule;
 import com.whatsapp.integration.dagger.modules.ApplicationModule;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
@@ -58,10 +61,20 @@ public class WhatsappIntegrationApplication
         activityClassComponents.remove(activityClass);
     }
 
-    public ReceiverComponent getReceiverComponent(BroadcastReceiver receiver) {
+    public ReceiverComponent getReceiverComponent(Context context) {
+        //noinspection LawOfDemeter
         return DaggerReceiverComponent.builder()
                                       .applicationComponent(applicationComponent)
+                                      //.receiverModule(new ReceiverModule(context))
                                       .build();
+    }
+
+    public ServiceComponent getServiceComponent(Service service) {
+        //noinspection LawOfDemeter
+        return DaggerServiceComponent.builder()
+                                     .applicationComponent(applicationComponent)
+                                     //.serviceModule(new ServiceModule(service))
+                                     .build();
     }
 
     // region Overrides of Application

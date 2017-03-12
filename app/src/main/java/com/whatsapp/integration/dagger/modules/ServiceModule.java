@@ -1,11 +1,11 @@
 package com.whatsapp.integration.dagger.modules;
 
+import android.app.Service;
 import android.content.Context;
 
 import com.rubius.androidshared.abstraction.CustomContextWrapper;
 import com.rubius.androidshared.abstraction.IContextWrapper;
-import com.rubius.androidshared.dagger.qualifiers.ReceiverContext;
-import com.rubius.androidshared.dagger.scopes.ReceiverScope;
+import com.rubius.androidshared.dagger.qualifiers.ServiceContext;
 
 import dagger.Module;
 import dagger.Provides;
@@ -14,17 +14,16 @@ import dagger.Provides;
  *
  */
 @Module
-public class ReceiverModule {
+public class ServiceModule {
     private final Context context;
 
-    public ReceiverModule(Context context) {
+    public ServiceModule(Service context) {
         this.context = context;
     }
 
     @Provides
-    @ReceiverScope
-    @ReceiverContext
-    public IContextWrapper provideReceiverContextWrapper() {
+    @ServiceContext
+    public IContextWrapper provideServiceContext() {
         return new CustomContextWrapper(context);
     }
 }

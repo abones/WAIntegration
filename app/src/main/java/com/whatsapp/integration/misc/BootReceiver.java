@@ -23,7 +23,7 @@ public class BootReceiver extends BroadcastReceiver {
             return;
 
         WhatsappIntegrationApplication application = (WhatsappIntegrationApplication) context.getApplicationContext();
-        ReceiverComponent receiverComponent = application.getReceiverComponent(this);
+        ReceiverComponent receiverComponent = application.getReceiverComponent(context);
         receiverComponent.inject(this);
 
         serviceManager.startServiceIfEnabled();
