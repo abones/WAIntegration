@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">\"Интеграция\" с WhatsApp</string>
     <string name="service_description">Служба, обеспечивающая передачу сообщений между веб-сервисом и WhatsApp</string>
+    <string name="message_service_enabled">Служба сообщений включена</string>
+    <string name="message_service_connection">Подключение</string>
 </resources>
