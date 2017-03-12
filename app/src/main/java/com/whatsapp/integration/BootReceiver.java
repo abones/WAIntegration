@@ -3,24 +3,28 @@ package com.whatsapp.integration;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import com.whatsapp.integration.dagger.components.ReceiverComponent;
+import com.whatsapp.integration.service.IMessageServiceManager;
+
+import javax.inject.Inject;
 
 /**
  *
  */
 public class BootReceiver extends BroadcastReceiver {
+    @Inject
+    protected IMessageServiceManager serviceManager;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (!Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()))
             return;
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isEnabled = preferences.getBoolean(MessageService.SETTINGS_ENABLED, false);
+        WhatsappIntegrationApplication application = (WhatsappIntegrationApplication) context.getApplicationContext();
+        ReceiverComponent receiverComponent = application.getReceiverComponent(this);
+        receiverComponent.inject(this);
 
-        if (isEnabled) {
-            Intent serviceIntent = new Intent(context, MessageService.class);
-            context.startService(serviceIntent);
-        }
+        serviceManager.startServiceIfEnabled();
     }
 }

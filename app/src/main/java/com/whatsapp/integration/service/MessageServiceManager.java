@@ -27,9 +27,14 @@ public class MessageServiceManager
 
     @Override
     public void startServiceIfEnabled() {
-        if (!settings.isMessageServiceEnabled())
+        if (!isServiceEnabled())
             return;
 
         applicationContext.startService(MessageService.class);
+    }
+
+    @Override
+    public boolean isServiceEnabled() {
+        return settings.isMessageServiceEnabled();
     }
 }

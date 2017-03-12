@@ -2,11 +2,14 @@ package com.whatsapp.integration;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 
 import com.whatsapp.integration.dagger.components.ActivityComponent;
 import com.whatsapp.integration.dagger.components.ApplicationComponent;
 import com.whatsapp.integration.dagger.components.DaggerActivityComponent;
 import com.whatsapp.integration.dagger.components.DaggerApplicationComponent;
+import com.whatsapp.integration.dagger.components.DaggerReceiverComponent;
+import com.whatsapp.integration.dagger.components.ReceiverComponent;
 import com.whatsapp.integration.dagger.modules.ActivityModule;
 import com.whatsapp.integration.dagger.modules.ApplicationModule;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
@@ -19,7 +22,8 @@ import javax.inject.Inject;
 /**
  *
  */
-public class WhatsappIntegrationApplication extends Application {
+public class WhatsappIntegrationApplication
+        extends Application {
     @Inject
     protected IWhatsappIntegrationApplicationViewModel viewModel;
     private ApplicationComponent applicationComponent;
@@ -29,8 +33,8 @@ public class WhatsappIntegrationApplication extends Application {
     private ApplicationComponent createApplicationComponent() {
         //noinspection LawOfDemeter
         return DaggerApplicationComponent.builder()
-            .applicationModule(new ApplicationModule(this))
-            .build();
+                                         .applicationModule(new ApplicationModule(this))
+                                         .build();
     }
 
     public ActivityComponent getActivityComponent(Activity activity) {
@@ -41,9 +45,9 @@ public class WhatsappIntegrationApplication extends Application {
         if (result == null) {
             //noinspection LawOfDemeter
             result = DaggerActivityComponent.builder()
-                .applicationComponent(applicationComponent)
-                .activityModule(new ActivityModule(activity))
-                .build();
+                                            .applicationComponent(applicationComponent)
+                                            .activityModule(new ActivityModule(activity))
+                                            .build();
             activityClassComponents.put(activityClass, result);
         }
 
@@ -52,6 +56,12 @@ public class WhatsappIntegrationApplication extends Application {
 
     public void releaseActivityComponent(Class<? extends Activity> activityClass) {
         activityClassComponents.remove(activityClass);
+    }
+
+    public ReceiverComponent getReceiverComponent(BroadcastReceiver receiver) {
+        return DaggerReceiverComponent.builder()
+                                      .applicationComponent(applicationComponent)
+                                      .build();
     }
 
     // region Overrides of Application

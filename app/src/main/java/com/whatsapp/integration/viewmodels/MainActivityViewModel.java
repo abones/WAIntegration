@@ -60,6 +60,7 @@ public class MainActivityViewModel
     @Override
     public void onStart() {
         super.onStart();
+        setIsServiceEnabled(messageServiceManager.isServiceEnabled());
         messageServiceManager.startServiceIfEnabled();
     }
 
