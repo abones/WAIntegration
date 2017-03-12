@@ -4,4 +4,7 @@
     <string name="message_service_enabled">Message service enabled</string>
     <string name="message_service_connection">Connection</string>
     <string name="no_messages_available">No messages</string>
+    <string name="message_enter_connection">Enter server address</string>
+    <string name="connection_ok">OK</string>
+    <string name="connection_cancel">Cancel</string>
 </resources>

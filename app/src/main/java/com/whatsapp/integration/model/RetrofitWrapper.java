@@ -1,6 +1,7 @@
 package com.whatsapp.integration.model;
 
 import com.google.gson.GsonBuilder;
+import com.rubius.androidshared.helpers.StringHelper;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,7 @@ public class RetrofitWrapper
             whatMessageService = null;
         }
 
-        if (connection != null)
+        if (!StringHelper.isNullOrEmpty(connection))
             retrofit = createRetrofit();
     }
 

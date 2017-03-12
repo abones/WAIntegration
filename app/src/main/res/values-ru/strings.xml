@@ -5,4 +5,7 @@
     <string name="message_service_enabled">Служба сообщений включена</string>
     <string name="message_service_connection">Подключение</string>
     <string name="no_messages_available">Нет сообщений</string>
+    <string name="message_enter_connection">Введите адрес сервера</string>
+    <string name="connection_ok">OK</string>
+    <string name="connection_cancel">Отмена</string>
 </resources>

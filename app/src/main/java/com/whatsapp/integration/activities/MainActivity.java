@@ -1,6 +1,7 @@
 package com.whatsapp.integration.activities;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import com.android.databinding.library.baseAdapters.BR;
 import com.rubius.androidshared.activities.AppCompatActivityBase;
@@ -21,8 +22,8 @@ public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationAppli
 
         ActivityMainBinding binding = getBinding();
 
-        //Toolbar toolbar = binding.toolbar;
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.whatsapp.integration.viewmodels;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.widget.EditText;
 
 import com.rubius.androidshared.abstraction.IActivityContextWrapper;
 import com.rubius.androidshared.binding.RecyclerBindingAdapter;
@@ -14,6 +16,7 @@ import com.rubius.androidshared.dagger.qualifiers.ActivityContext;
 import com.rubius.androidshared.exceptions.NotImplementedException;
 import com.rubius.androidshared.viewmodels.ActivityViewModel;
 import com.whatsapp.integration.BR;
+import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.service.IMessageServiceManager;
 
@@ -128,17 +131,43 @@ public class MainActivityViewModel
 
     // endregion hasMessages
 
+    // region connection
+
+    private String connection;
+
+    @Bindable
+    public String getConnection() {
+        return connection;
+    }
+
+    private void setConnection(String connection) {
+        set(BR.connection, this.connection, connection, () -> this.connection = connection);
+    }
+
+    // endregion connection
+
     // endregion Properties
 
     public void toggleService() {
         setIsServiceEnabled(!isServiceEnabled);
     }
 
-    public void sendMessage() {
-        throw new NotImplementedException();
+    public void changeConnection() {
+        AlertDialog.Builder dialogBuilder = contextWrapper.createAlertDialog();
+
+        EditText editText = contextWrapper.createEditText();
+        dialogBuilder.setView(editText);
+
+        dialogBuilder.setTitle(contextWrapper.getString(R.string.message_enter_connection));
+        dialogBuilder.setPositiveButton(
+                contextWrapper.getString(R.string.connection_ok),
+                (dialog, whichButton) -> setConnection(editText.getText().toString())
+        );
+        dialogBuilder.setNegativeButton(contextWrapper.getString(R.string.connection_cancel),, null);
+        dialogBuilder.show();
     }
 
-    public void setConnection() {
+    public void sendMessage() {
         throw new NotImplementedException();
     }
 }
