@@ -18,6 +18,7 @@ import com.rubius.androidshared.viewmodels.ActivityViewModel;
 import com.whatsapp.integration.BR;
 import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
+import com.whatsapp.integration.misc.IPreferences;
 import com.whatsapp.integration.service.IMessageServiceManager;
 
 import javax.inject.Inject;
@@ -31,16 +32,19 @@ public class MainActivityViewModel
         IMainActivityViewModel {
 
     private final IMessageServiceManager messageServiceManager;
+    private final IPreferences preferences;
     private RecyclerBindingAdapter<String> messagesAdapter;
 
     @Inject
     public MainActivityViewModel(
             @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
             @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel,
-            @NonNull IMessageServiceManager messageServiceManager
+            @NonNull IMessageServiceManager messageServiceManager,
+            IPreferences preferences
     ) {
         super(contextWrapper, applicationViewModel);
         this.messageServiceManager = messageServiceManager;
+        this.preferences = preferences;
     }
 
     @Override
@@ -64,6 +68,7 @@ public class MainActivityViewModel
     public void onStart() {
         super.onStart();
         setIsServiceEnabled(messageServiceManager.isServiceEnabled());
+        connection = preferences.getString(IMessageServiceViewModel.SETTINGS_CONNECTION, null);
         messageServiceManager.startServiceIfEnabled();
     }
 
@@ -141,7 +146,10 @@ public class MainActivityViewModel
     }
 
     private void setConnection(String connection) {
-        set(BR.connection, this.connection, connection, () -> this.connection = connection);
+        if (!set(BR.connection, this.connection, connection, () -> this.connection = connection))
+            return;
+
+        preferences.setConnection(connection);
     }
 
     // endregion connection
@@ -156,6 +164,7 @@ public class MainActivityViewModel
         AlertDialog.Builder dialogBuilder = contextWrapper.createAlertDialog();
 
         EditText editText = contextWrapper.createEditText();
+        editText.setText(connection);
         dialogBuilder.setView(editText);
 
         dialogBuilder.setTitle(contextWrapper.getString(R.string.message_enter_connection));
@@ -163,7 +172,7 @@ public class MainActivityViewModel
                 contextWrapper.getString(R.string.connection_ok),
                 (dialog, whichButton) -> setConnection(editText.getText().toString())
         );
-        dialogBuilder.setNegativeButton(contextWrapper.getString(R.string.connection_cancel),, null);
+        dialogBuilder.setNegativeButton(contextWrapper.getString(R.string.connection_cancel), null);
         dialogBuilder.show();
     }
 

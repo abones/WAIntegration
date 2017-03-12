@@ -51,4 +51,9 @@ public class Preferences
     public String getString(String key, String defValue) {
         return getSettings().getString(key, defValue);
     }
+
+    @Override
+    public void setConnection(String connection) {
+        getSettings().edit().putString(IMessageServiceViewModel.SETTINGS_CONNECTION, connection).apply();
+    }
 }

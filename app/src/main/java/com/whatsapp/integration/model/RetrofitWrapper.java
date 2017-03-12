@@ -39,6 +39,9 @@ public class RetrofitWrapper
 
     @Override
     public void setConnection(String connection) {
+        if (this.connection == null ? connection == null : this.connection.equals(connection))
+            return;
+
         this.connection = connection;
 
         synchronized (whatMessageServiceLock) {

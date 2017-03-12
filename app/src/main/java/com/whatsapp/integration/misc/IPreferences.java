@@ -14,4 +14,6 @@ public interface IPreferences {
     void unregisterListener(SharedPreferences.OnSharedPreferenceChangeListener onConnectionChangedListener);
 
     String getString(String key, String defValue);
+
+    void setConnection(String connection);
 }
