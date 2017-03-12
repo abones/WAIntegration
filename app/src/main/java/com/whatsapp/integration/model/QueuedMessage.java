@@ -1,4 +1,4 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

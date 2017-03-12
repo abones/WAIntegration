@@ -4,8 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.rubius.androidshared.abstraction.IContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ApplicationContext;
-import com.whatsapp.integration.IPreferences;
-import com.whatsapp.integration.MessageService;
+import com.whatsapp.integration.misc.IPreferences;
 
 import javax.inject.Inject;
 

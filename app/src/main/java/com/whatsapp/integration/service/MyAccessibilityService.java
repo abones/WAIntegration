@@ -1,4 +1,4 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.BroadcastReceiver;
@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import com.whatsapp.integration.model.MessageInfo;
+import com.whatsapp.integration.model.QueuedMessage;
 
 import java.util.ArrayList;
 import java.util.List;

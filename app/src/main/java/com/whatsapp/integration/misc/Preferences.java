@@ -1,10 +1,11 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.misc;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.rubius.androidshared.abstraction.IContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ApplicationContext;
+import com.whatsapp.integration.service.MessageService;
 
 import javax.inject.Inject;
 

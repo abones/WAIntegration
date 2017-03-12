@@ -60,7 +60,7 @@ public class MainActivityViewModel
     @Override
     public void onStart() {
         super.onStart();
-        isServiceEnabled = messageServiceManager.isServiceEnabled();
+        setIsServiceEnabled(messageServiceManager.isServiceEnabled());
         messageServiceManager.startServiceIfEnabled();
     }
 
@@ -97,7 +97,6 @@ public class MainActivityViewModel
                 () -> this.isServiceEnabled = isServiceEnabled
         ))
             return;
-
         messageServiceManager.setServiceEnabled(isServiceEnabled);
     }
 
@@ -113,6 +112,21 @@ public class MainActivityViewModel
     }
 
     // endregion recyclerConfiguration
+
+    // region hasMessages
+
+    private boolean hasMessages;
+
+    @Bindable
+    public boolean getHasMessages() {
+        return hasMessages;
+    }
+
+    private void setHasMessages(boolean hasMessages) {
+        set(BR.hasMessages, this.hasMessages, hasMessages, () -> this.hasMessages = hasMessages);
+    }
+
+    // endregion hasMessages
 
     // endregion Properties
 

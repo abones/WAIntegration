@@ -1,4 +1,4 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,6 +17,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.whatsapp.integration.model.MessageInfo;
+import com.whatsapp.integration.model.QueuedMessage;
+import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 
 import java.util.ArrayList;
@@ -25,7 +28,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.whatsapp.integration.MyAccessibilityService.ACTION_RECEIVE_MESSAGES;
 
 /**
  *
@@ -83,7 +85,7 @@ public class MessageService extends Service {
                 mNotificationManager.notify(NOTIFICATION_ID, createNotification("Reived messages: " + messages.size()));
             }
         };
-        IntentFilter intentFilter = new IntentFilter(ACTION_RECEIVE_MESSAGES);
+        IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
         registerReceiver(messagesReceiver, intentFilter);
 
         whatsappInterfaceConnection = new WhatsappInterfaceConnection();

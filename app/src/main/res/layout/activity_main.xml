@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.rubius.androidshared.binding.converters.BoolToVisibilityConverter"/>
+
         <variable
             name="viewModel"
             type="com.whatsapp.integration.viewmodels.MainActivityViewModel"/>
@@ -58,8 +60,8 @@
                             android:layout_marginStart="8dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:textSize="16sp"
                             android:text="@string/message_service_enabled"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toLeftOf="@+id/switch1"
@@ -70,11 +72,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
+                            android:checked="@{viewModel.isServiceEnabled}"
+                            android:onClick="@{() -> viewModel.toggleService()}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:checked="@{viewModel.isServiceEnabled}"
-                            android:onClick="@{() -> viewModel.toggleService()}"/>
+                            app:layout_constraintTop_toTopOf="parent"/>
 
                     </android.support.constraint.ConstraintLayout>
 
@@ -93,8 +95,8 @@
                             android:layout_marginTop="8dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:textSize="16sp"
                             android:text="@string/message_service_connection"
+                            android:textSize="16sp"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
@@ -102,13 +104,13 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginStart="8dp"
-                            android:layout_marginBottom="8dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:textColor="@color/paleText"
                             android:text="localhost"
+                            android:textColor="@color/paleText"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
@@ -123,12 +125,28 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorAccent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            bind:configuration="@{viewModel.recyclerConfiguration}"/>
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/no_messages_available"
+                android:visibility="@{BoolToVisibilityConverter.convert(!viewModel.hasMessages)}"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorAccent"
+                android:visibility="@{BoolToVisibilityConverter.convert(viewModel.hasMessages)}"
+                bind:configuration="@{viewModel.recyclerConfiguration}"/>
+
+        </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"

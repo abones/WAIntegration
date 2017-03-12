@@ -23,7 +23,7 @@
         </activity>
 
         <service
-            android:name="com.whatsapp.integration.MyAccessibilityService"
+            android:name="com.whatsapp.integration.service.MyAccessibilityService"
             android:description="@string/service_description"
             android:enabled="true"
             android:exported="true"
@@ -38,11 +38,11 @@
                 android:resource="@xml/accessibility" />
         </service>
         <service
-            android:name=".MessageService"
+            android:name=".service.MessageService"
             android:enabled="true" />
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".misc.BootReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

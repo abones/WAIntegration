@@ -1,9 +1,10 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.misc;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.whatsapp.integration.WhatsappIntegrationApplication;
 import com.whatsapp.integration.dagger.components.ReceiverComponent;
 import com.whatsapp.integration.service.IMessageServiceManager;
 

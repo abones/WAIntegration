@@ -1,4 +1,4 @@
-package com.whatsapp.integration;
+package com.whatsapp.integration.misc;
 
 /**
  *
