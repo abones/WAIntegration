@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.rubius.androidshared.abstraction.IContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ApplicationContext;
-import com.whatsapp.integration.service.MessageService;
+import com.whatsapp.integration.viewmodels.IMessageServiceViewModel;
 
 import javax.inject.Inject;
 
@@ -29,12 +29,12 @@ public class Preferences
 
     @Override
     public boolean isMessageServiceEnabled() {
-        return getSettings().getBoolean(MessageService.SETTINGS_ENABLED, false);
+        return getSettings().getBoolean(IMessageServiceViewModel.SETTINGS_ENABLED, false);
     }
 
     @Override
     public void setServiceEnabled(boolean isServiceEnabled) {
-        getSettings().edit().putBoolean(MessageService.SETTINGS_ENABLED, isServiceEnabled).apply();
+        getSettings().edit().putBoolean(IMessageServiceViewModel.SETTINGS_ENABLED, isServiceEnabled).apply();
     }
 
     @Override

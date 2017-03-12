@@ -3,11 +3,14 @@ package com.whatsapp.integration.viewmodels;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -19,16 +22,17 @@ import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.misc.IPreferences;
 import com.whatsapp.integration.model.MessageInfo;
-import com.whatsapp.integration.service.MessageService;
+import com.whatsapp.integration.model.QueuedMessage;
 import com.whatsapp.integration.service.MyAccessibilityService;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.inject.Inject;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.whatsapp.integration.service.MessageService.SETTINGS_CONNECTION;
 
 /**
  *
@@ -42,7 +46,12 @@ public class MessageServiceViewModel
     private final IServiceContextWrapper serviceContextWrapper;
     private final IPreferences preferences;
     private final SharedPreferences.OnSharedPreferenceChangeListener onConnectionChangedListener = this::onConnectionChanged;
+    private final IBinder messageServiceBinder = new Binder();
+
     private BroadcastReceiver messagesReceiver;
+    private WhatsappInterfaceConnection whatsappInterfaceConnection;
+
+    private final Queue<QueuedMessage> messages = new ConcurrentLinkedQueue<>();
 
     @Inject
     public MessageServiceViewModel(
@@ -68,6 +77,22 @@ public class MessageServiceViewModel
 
     // endregion Connection
 
+    // region isServiceConnected
+
+    private boolean isServiceConnected;
+
+    private void setIsServiceConnected(boolean isServiceConnected) {
+        if (this.isServiceConnected == isServiceConnected)
+            return;
+
+        this.isServiceConnected = isServiceConnected;
+
+        if (isServiceConnected)
+            sendPendingMessages();
+    }
+
+    // endregion isServiceConnected
+
     private Notification createNotification(String title) {
         PendingIntent pendingIntent = contextWrapper.createPendingIntent(
                 MainActivity.class,
@@ -84,6 +109,19 @@ public class MessageServiceViewModel
                              .build();
     }
 
+    private synchronized void sendPendingMessages() {
+        while (!messages.isEmpty()) {
+            QueuedMessage message = messages.remove();
+
+            // TODO: интенты создавать в contextwrapper
+            Intent broadcastIntent = new Intent(MyAccessibilityService.ACTION_SEND_MESSAGE);
+            broadcastIntent.putExtra(MyAccessibilityService.EXTRA_MESSAGE, message);
+            contextWrapper.sendBroadcast(broadcastIntent);
+        }
+    }
+
+    // region Overrides of ViewModelBase
+
     @Override
     protected String getPrintPrefix() {
         return "MessageServiceViewModel";
@@ -94,7 +132,7 @@ public class MessageServiceViewModel
             @Nullable Bundle savedInstanceState, @Nullable Intent intent) {
         super.onCreate(savedInstanceState, intent);
         preferences.registerListener(onConnectionChangedListener);
-        setConnection(preferences.getString(MessageService.SETTINGS_CONNECTION, null));
+        setConnection(preferences.getString(SETTINGS_CONNECTION, null));
 
         serviceContextWrapper.startForeground(
                 NOTIFICATION_ID,
@@ -115,6 +153,9 @@ public class MessageServiceViewModel
         };
         IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
         contextWrapper.registerReceiver(messagesReceiver, intentFilter);
+
+        whatsappInterfaceConnection = new WhatsappInterfaceConnection();
+        contextWrapper.bindService(MyAccessibilityService.class, whatsappInterfaceConnection, 0);
     }
 
     @Override
@@ -122,5 +163,37 @@ public class MessageServiceViewModel
         preferences.unregisterListener(onConnectionChangedListener);
         contextWrapper.unregisterReceiver(messagesReceiver);
         serviceContextWrapper.stopForeground(true);
+        contextWrapper.unbindService(whatsappInterfaceConnection);
     }
+
+    @Override
+    public IBinder onBind() {
+        return messageServiceBinder;
+    }
+
+    // endregion Overrides of ViewModelBase
+
+    // region Internal classes
+
+    private class WhatsappInterfaceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            setIsServiceConnected(true);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            setIsServiceConnected(true);
+        }
+    }
+
+    public class Binder extends android.os.Binder {
+        public void sendMessage(QueuedMessage message) {
+            messages.add(message);
+            if (isServiceConnected)
+                sendPendingMessages();
+        }
+    }
+
+    // endregion Internal classes
 }
