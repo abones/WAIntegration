@@ -3,6 +3,6 @@ package com.whatsapp.integration;
 /**
  *
  */
-public interface ISettings {
+public interface IPreferences {
     boolean isMessageServiceEnabled();
 }

@@ -21,17 +21,19 @@ import javax.inject.Inject;
 /**
  *
  */
-public class MainActivityViewModel extends ActivityViewModel<IWhatsappIntegrationApplicationViewModel, MainActivity> implements
-    IMainActivityViewModel {
+public class MainActivityViewModel
+        extends ActivityViewModel<IWhatsappIntegrationApplicationViewModel, MainActivity>
+        implements
+        IMainActivityViewModel {
 
     private final IMessageServiceManager messageServiceManager;
     private RecyclerBindingAdapter<String> messagesAdapter;
 
     @Inject
     public MainActivityViewModel(
-        @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
-        @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel,
-        @NonNull IMessageServiceManager messageServiceManager
+            @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
+            @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel,
+            @NonNull IMessageServiceManager messageServiceManager
     ) {
         super(contextWrapper, applicationViewModel);
         this.messageServiceManager = messageServiceManager;
@@ -39,14 +41,19 @@ public class MainActivityViewModel extends ActivityViewModel<IWhatsappIntegratio
 
     @Override
     public void onCreate(
-        @Nullable Bundle savedInstanceState, @Nullable Intent intent
+            @Nullable Bundle savedInstanceState, @Nullable Intent intent
     ) {
         super.onCreate(savedInstanceState, intent);
         messagesAdapter = createMessagesAdapter();
         recyclerConfiguration = new RecyclerConfiguration();
         recyclerConfiguration.setAdapter(messagesAdapter);
         recyclerConfiguration.setItemAnimator(new DefaultItemAnimator());
-        recyclerConfiguration.setLayoutManager(contextWrapper.createGridLayoutManager(1));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerConfiguration.setLayoutManager(contextWrapper.createLinearLayoutManager());
     }
 
     @Override
@@ -62,10 +69,10 @@ public class MainActivityViewModel extends ActivityViewModel<IWhatsappIntegratio
 
     private RecyclerBindingAdapter<String> createMessagesAdapter() {
         return new RecyclerBindingAdapter<>(
-            null,
-            0,//R.layout.item_exam_result,
-            0,//BR.item,
-            null
+                null,
+                0,//R.layout.item_exam_result,
+                0,//BR.item,
+                null
         );
     }
 

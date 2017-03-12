@@ -1,8 +1,8 @@
 package com.whatsapp.integration.dagger.modules;
 
 import com.rubius.androidshared.dagger.scopes.ApplicationScope;
-import com.whatsapp.integration.ISettings;
-import com.whatsapp.integration.Settings;
+import com.whatsapp.integration.IPreferences;
+import com.whatsapp.integration.Preferences;
 import com.whatsapp.integration.service.IMessageServiceManager;
 import com.whatsapp.integration.service.MessageServiceManager;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
@@ -26,5 +26,5 @@ public abstract class ApplicationScopeBinds {
 
     @Binds
     @ApplicationScope
-    public abstract ISettings bindSettings(Settings settings);
+    public abstract IPreferences bindSettings(Preferences preferences);
 }

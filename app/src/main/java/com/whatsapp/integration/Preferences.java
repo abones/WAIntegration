@@ -12,13 +12,13 @@ import javax.inject.Inject;
  *
  */
 
-public class Settings
-        implements ISettings {
+public class Preferences
+        implements IPreferences {
 
     private final IContextWrapper applicationContext;
 
     @Inject
-    public Settings(@ApplicationContext @NonNull IContextWrapper applicationContext) {
+    public Preferences(@ApplicationContext @NonNull IContextWrapper applicationContext) {
         this.applicationContext = applicationContext;
     }
 

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.rubius.androidshared.abstraction.IContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ApplicationContext;
-import com.whatsapp.integration.ISettings;
+import com.whatsapp.integration.IPreferences;
 import com.whatsapp.integration.MessageService;
 
 import javax.inject.Inject;
@@ -17,10 +17,10 @@ public class MessageServiceManager
         implements IMessageServiceManager {
 
     private final IContextWrapper applicationContext;
-    private final ISettings settings;
+    private final IPreferences settings;
 
     @Inject
-    public MessageServiceManager(@ApplicationContext @NonNull IContextWrapper applicationContext, @NonNull ISettings settings) {
+    public MessageServiceManager(@ApplicationContext @NonNull IContextWrapper applicationContext, @NonNull IPreferences settings) {
         this.applicationContext = applicationContext;
         this.settings = settings;
     }
