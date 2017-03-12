@@ -30,4 +30,9 @@ public class Preferences
     public boolean isMessageServiceEnabled() {
         return getSettings().getBoolean(MessageService.SETTINGS_ENABLED, false);
     }
+
+    @Override
+    public void setServiceEnabled(boolean isServiceEnabled) {
+        getSettings().edit().putBoolean(MessageService.SETTINGS_ENABLED, isServiceEnabled).apply();
+    }
 }

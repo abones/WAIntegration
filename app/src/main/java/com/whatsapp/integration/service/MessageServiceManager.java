@@ -20,7 +20,9 @@ public class MessageServiceManager
     private final IPreferences settings;
 
     @Inject
-    public MessageServiceManager(@ApplicationContext @NonNull IContextWrapper applicationContext, @NonNull IPreferences settings) {
+    public MessageServiceManager(
+            @ApplicationContext @NonNull IContextWrapper applicationContext,
+            @NonNull IPreferences settings) {
         this.applicationContext = applicationContext;
         this.settings = settings;
     }
@@ -30,11 +32,29 @@ public class MessageServiceManager
         if (!isServiceEnabled())
             return;
 
+        startService();
+    }
+
+    private void startService() {
         applicationContext.startService(MessageService.class);
+    }
+
+    private void stopService() {
+        applicationContext.stopService(MessageService.class);
     }
 
     @Override
     public boolean isServiceEnabled() {
         return settings.isMessageServiceEnabled();
+    }
+
+    @Override
+    public void setServiceEnabled(boolean isServiceEnabled) {
+        settings.setServiceEnabled(isServiceEnabled);
+
+        if (isServiceEnabled)
+            startService();
+        else
+            stopService();
     }
 }

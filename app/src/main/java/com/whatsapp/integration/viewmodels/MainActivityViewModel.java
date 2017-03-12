@@ -60,7 +60,7 @@ public class MainActivityViewModel
     @Override
     public void onStart() {
         super.onStart();
-        setIsServiceEnabled(messageServiceManager.isServiceEnabled());
+        isServiceEnabled = messageServiceManager.isServiceEnabled();
         messageServiceManager.startServiceIfEnabled();
     }
 
@@ -90,12 +90,15 @@ public class MainActivityViewModel
     }
 
     private void setIsServiceEnabled(boolean isServiceEnabled) {
-        set(
+        if (!set(
                 BR.isServiceEnabled,
                 this.isServiceEnabled,
                 isServiceEnabled,
                 () -> this.isServiceEnabled = isServiceEnabled
-        );
+        ))
+            return;
+
+        messageServiceManager.setServiceEnabled(isServiceEnabled);
     }
 
     // endregion isServiceEnabled
