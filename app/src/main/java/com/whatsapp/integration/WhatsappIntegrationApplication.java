@@ -15,6 +15,7 @@ import com.whatsapp.integration.dagger.components.ReceiverComponent;
 import com.whatsapp.integration.dagger.components.ServiceComponent;
 import com.whatsapp.integration.dagger.modules.ActivityModule;
 import com.whatsapp.integration.dagger.modules.ApplicationModule;
+import com.whatsapp.integration.dagger.modules.ServiceModule;
 import com.whatsapp.integration.viewmodels.IWhatsappIntegrationApplicationViewModel;
 
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class WhatsappIntegrationApplication
         //noinspection LawOfDemeter
         return DaggerServiceComponent.builder()
                                      .applicationComponent(applicationComponent)
-                                     //.serviceModule(new ServiceModule(service))
+                                     .serviceModule(new ServiceModule(service))
                                      .build();
     }
 

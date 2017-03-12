@@ -36,4 +36,19 @@ public class Preferences
     public void setServiceEnabled(boolean isServiceEnabled) {
         getSettings().edit().putBoolean(MessageService.SETTINGS_ENABLED, isServiceEnabled).apply();
     }
+
+    @Override
+    public void registerListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        getSettings().registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    @Override
+    public void unregisterListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        getSettings().unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
+    @Override
+    public String getString(String key, String defValue) {
+        return getSettings().getString(key, defValue);
+    }
 }
