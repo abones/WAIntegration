@@ -48,7 +48,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="64dp"
                         android:background="?attr/selectableItemBackground"
-                        android:clickable="true">
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.toggleService()}">
 
                         <TextView
                             android:layout_width="0dp"
@@ -71,7 +72,9 @@
                             android:layout_gravity="end"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:checked="@{viewModel.isServiceEnabled}"
+                            android:onClick="@{() -> viewModel.toggleService()}"/>
 
                     </android.support.constraint.ConstraintLayout>
 

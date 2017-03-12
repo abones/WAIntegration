@@ -13,6 +13,7 @@ import com.rubius.androidshared.binding.RecyclerConfiguration;
 import com.rubius.androidshared.dagger.qualifiers.ActivityContext;
 import com.rubius.androidshared.exceptions.NotImplementedException;
 import com.rubius.androidshared.viewmodels.ActivityViewModel;
+import com.whatsapp.integration.BR;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.service.IMessageServiceManager;
 
@@ -76,6 +77,28 @@ public class MainActivityViewModel
         );
     }
 
+    // region Properties
+
+    // region isServiceEnabled
+
+    private boolean isServiceEnabled;
+
+    @Bindable
+    public boolean getIsServiceEnabled() {
+        return isServiceEnabled;
+    }
+
+    private void setIsServiceEnabled(boolean isServiceEnabled) {
+        set(
+                BR.isServiceEnabled,
+                this.isServiceEnabled,
+                isServiceEnabled,
+                () -> this.isServiceEnabled = isServiceEnabled
+        );
+    }
+
+    // endregion isServiceEnabled
+
     // region recyclerConfiguration
 
     private RecyclerConfiguration recyclerConfiguration;
@@ -86,6 +109,12 @@ public class MainActivityViewModel
     }
 
     // endregion recyclerConfiguration
+
+    // endregion Properties
+
+    public void toggleService() {
+        setIsServiceEnabled(!isServiceEnabled);
+    }
 
     public void sendMessage() {
         throw new NotImplementedException();
