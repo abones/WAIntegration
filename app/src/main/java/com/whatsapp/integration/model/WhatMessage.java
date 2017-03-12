@@ -2,6 +2,8 @@ package com.whatsapp.integration.model;
 
 import android.support.annotation.Nullable;
 
+import com.rubius.androidshared.helpers.DateHelper;
+
 import java.util.Date;
 
 /**
