@@ -3,5 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="paleText">#BBBBBBBB</color>
+    <color name="colorImportant">#424242</color>
+    <color name="colorLessImportant">#BBBBBB</color>
+    <color name="colorLessImportantFaded">#D7CCC8</color>
+
+    <!--Text-->
+    <color name="text_primary">@color/colorImportant</color>
+    <color name="text_secondary">@color/colorLessImportant</color>
+
+    <!--Images-->
+    <color name="image_disabled_item">@color/colorLessImportantFaded</color>
 </resources>

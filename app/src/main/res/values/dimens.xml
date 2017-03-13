@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--General-->
+    <dimen name="general_tiny">8dp</dimen>
+    <dimen name="general_small">16dp</dimen>
+    <dimen name="general_larger">24dp</dimen>
+    <dimen name="general_large">32dp</dimen>
+    <dimen name="general_very_large">48dp</dimen>
+
+    <!--Text-->
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_medium">18sp</dimen>
+
+    <!--Layout-->
+    <!--Layout.Height-->
+    <dimen name="layout_height_line">1dp</dimen>
+    <dimen name="layout_height_tall">@dimen/general_very_large</dimen>
+
+    <!--Layout.Margins-->
+    <dimen name="layout_margin_horizontal_small">@dimen/general_small</dimen>
+    <dimen name="layout_margin_vertical_small">@dimen/general_small</dimen>
+</resources>
