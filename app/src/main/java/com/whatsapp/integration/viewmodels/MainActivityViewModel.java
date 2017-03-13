@@ -30,9 +30,9 @@ import javax.inject.Inject;
  *
  */
 public class MainActivityViewModel
-        extends ActivityViewModel<IWhatsappIntegrationApplicationViewModel, MainActivity>
-        implements
-        IMainActivityViewModel {
+    extends ActivityViewModel<IWhatsappIntegrationApplicationViewModel, MainActivity>
+    implements
+    IMainActivityViewModel {
 
     private final IMessageServiceManager messageServiceManager;
     private final IPreferences preferences;
@@ -42,10 +42,10 @@ public class MainActivityViewModel
 
     @Inject
     public MainActivityViewModel(
-            @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
-            @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel,
-            @NonNull IMessageServiceManager messageServiceManager,
-            IPreferences preferences
+        @ActivityContext @NonNull IActivityContextWrapper contextWrapper,
+        @NonNull IWhatsappIntegrationApplicationViewModel applicationViewModel,
+        @NonNull IMessageServiceManager messageServiceManager,
+        IPreferences preferences
     ) {
         super(contextWrapper, applicationViewModel);
         this.messageServiceManager = messageServiceManager;
@@ -54,7 +54,7 @@ public class MainActivityViewModel
 
     @Override
     public void onCreate(
-            @Nullable Bundle savedInstanceState, @Nullable Intent intent
+        @Nullable Bundle savedInstanceState, @Nullable Intent intent
     ) {
         super.onCreate(savedInstanceState, intent);
         messagesAdapter = createMessagesAdapter();
@@ -91,10 +91,10 @@ public class MainActivityViewModel
 
     private RecyclerBindingAdapter<String> createMessagesAdapter() {
         return new RecyclerBindingAdapter<>(
-                null,
-                0,//R.layout.item_exam_result,
-                0,//BR.item,
-                null
+            null,
+            0,//R.layout.item_exam_result,
+            0,//BR.item,
+            null
         );
     }
 
@@ -111,10 +111,10 @@ public class MainActivityViewModel
 
     private void setIsServiceEnabled(boolean isServiceEnabled) {
         if (!set(
-                BR.isServiceEnabled,
-                this.isServiceEnabled,
-                isServiceEnabled,
-                () -> this.isServiceEnabled = isServiceEnabled
+            BR.isServiceEnabled,
+            this.isServiceEnabled,
+            isServiceEnabled,
+            () -> this.isServiceEnabled = isServiceEnabled
         ))
             return;
         messageServiceManager.setServiceEnabled(isServiceEnabled);
@@ -181,8 +181,8 @@ public class MainActivityViewModel
 
         dialogBuilder.setTitle(contextWrapper.getString(R.string.message_enter_connection));
         dialogBuilder.setPositiveButton(
-                contextWrapper.getString(R.string.connection_ok),
-                (dialog, whichButton) -> setConnection(editText.getText().toString())
+            contextWrapper.getString(R.string.connection_ok),
+            (dialog, whichButton) -> setConnection(editText.getText().toString())
         );
         dialogBuilder.setNegativeButton(contextWrapper.getString(R.string.connection_cancel), null);
         dialogBuilder.show();

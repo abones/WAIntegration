@@ -47,8 +47,8 @@ import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
  */
 
 public class MessageServiceViewModel
-        extends ViewModelBase<IView>
-        implements IMessageServiceViewModel {
+    extends ViewModelBase<IView>
+    implements IMessageServiceViewModel {
     private static final int NOTIFICATION_ID = 1;
 
     private final IServiceContextWrapper serviceContextWrapper;
@@ -64,9 +64,10 @@ public class MessageServiceViewModel
 
     @Inject
     public MessageServiceViewModel(
-            @ServiceContext @NonNull IServiceContextWrapper contextWrapper,
-            IPreferences preferences,
-            IRetrofitWrapper retrofitWrapper) {
+        @ServiceContext @NonNull IServiceContextWrapper contextWrapper,
+        IPreferences preferences,
+        IRetrofitWrapper retrofitWrapper
+    ) {
         super(contextWrapper);
         this.serviceContextWrapper = contextWrapper;
         this.preferences = preferences;
@@ -107,18 +108,18 @@ public class MessageServiceViewModel
 
     private Notification createNotification(String title) {
         PendingIntent pendingIntent = contextWrapper.createPendingIntent(
-                MainActivity.class,
-                FLAG_UPDATE_CURRENT
+            MainActivity.class,
+            FLAG_UPDATE_CURRENT
         );
 
         return contextWrapper.getNotificationBuilder()
-                             .setSmallIcon(R.drawable.whaticon_holes)
-                             .setContentText("Service running")
-                             .setWhen(new Date().getTime())
-                             .setContentTitle(title)
-                             .setSubText("Srunning ervice")
-                             .setContentIntent(pendingIntent)
-                             .build();
+            .setSmallIcon(R.drawable.whaticon_holes)
+            .setContentText("Service running")
+            .setWhen(new Date().getTime())
+            .setContentTitle(title)
+            .setSubText("Srunning ervice")
+            .setContentIntent(pendingIntent)
+            .build();
     }
 
     private synchronized void sendPendingMessages() {
@@ -141,25 +142,26 @@ public class MessageServiceViewModel
 
     @Override
     public void onCreate(
-            @Nullable Bundle savedInstanceState, @Nullable Intent intent) {
+        @Nullable Bundle savedInstanceState, @Nullable Intent intent
+    ) {
         super.onCreate(savedInstanceState, intent);
         preferences.registerListener(onConnectionChangedListener);
         setConnection(preferences.getString(SETTINGS_CONNECTION, null));
 
         serviceContextWrapper.startForeground(
-                NOTIFICATION_ID,
-                createNotification("Service running")
+            NOTIFICATION_ID,
+            createNotification("Service running")
         );
 
         messagesReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 ArrayList<MessageInfo> messages = intent.getParcelableArrayListExtra(
-                        MyAccessibilityService.EXTRA_MESSAGES);
+                    MyAccessibilityService.EXTRA_MESSAGES);
 
                 contextWrapper.notify(
-                        NOTIFICATION_ID,
-                        createNotification("Received messages: " + messages.size())
+                    NOTIFICATION_ID,
+                    createNotification("Received messages: " + messages.size())
                 );
             }
         };
@@ -212,7 +214,8 @@ public class MessageServiceViewModel
             call.enqueue(new Callback<List<WhatMessage>>() {
                 @Override
                 public void onResponse(
-                        Call<List<WhatMessage>> call, Response<List<WhatMessage>> response) {
+                    Call<List<WhatMessage>> call, Response<List<WhatMessage>> response
+                ) {
                     List<WhatMessage> messages = response.body();
                 }
 

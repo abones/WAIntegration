@@ -15,13 +15,14 @@ import java.util.Date;
  */
 
 public class WhatMessageSerializer
-        implements ITwoWaySerializer<WhatMessage> {
+    implements ITwoWaySerializer<WhatMessage> {
 
     @Override
     public JsonElement serialize(
-            WhatMessage src,
-            Type typeOfSrc,
-            JsonSerializationContext context) {
+        WhatMessage src,
+        Type typeOfSrc,
+        JsonSerializationContext context
+    ) {
         JsonObject result = new JsonObject();
 
         result.addProperty(WhatMessage.idName, src.getId());
@@ -34,19 +35,20 @@ public class WhatMessageSerializer
 
     @Override
     public WhatMessage deserialize(
-            JsonElement json,
-            Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+        JsonElement json,
+        Type typeOfT,
+        JsonDeserializationContext context
+    ) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
         long id = jsonObject.get(WhatMessage.idName)
-                            .getAsLong();
+            .getAsLong();
         String request = jsonObject.get(WhatMessage.requestName)
-                                   .getAsString();
+            .getAsString();
         String reply = jsonObject.get(WhatMessage.replyName)
-                                 .getAsString();
+            .getAsString();
         String createdAtString = jsonObject.get(WhatMessage.createdAtName)
-                                           .getAsString();
+            .getAsString();
         Date createdAt = DateHelper.parseIso8601(createdAtString);
 
         return new WhatMessage(id, request, reply, createdAt);
