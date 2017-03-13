@@ -7,4 +7,9 @@
     <string name="message_enter_connection">Enter server address</string>
     <string name="connection_ok">OK</string>
     <string name="connection_cancel">Cancel</string>
+    <string name="error_retrieving_messages_prefab">Error retrieving messages: %1$s</string>
+    <string name="service_started">Service started</string>
+    <string name="service_messages_received">Messages received</string>
+    <string name="service_messages_received_prefab">Received %1$d messages</string>
+    <string name="error_retrieving_messages">Error while retrieving messages</string>
 </resources>

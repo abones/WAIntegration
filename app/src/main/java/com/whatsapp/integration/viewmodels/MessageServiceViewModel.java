@@ -105,7 +105,7 @@ public class MessageServiceViewModel
 
     // endregion isServiceConnected
 
-    private Notification createNotification(String title) {
+    private Notification createNotification(String title, String subTitle) {
         PendingIntent pendingIntent = contextWrapper.createPendingIntent(
             MainActivity.class,
             FLAG_UPDATE_CURRENT
@@ -113,10 +113,9 @@ public class MessageServiceViewModel
 
         return contextWrapper.getNotificationBuilder()
             .setSmallIcon(R.drawable.whaticon_holes)
-            .setContentText("Service running")
+            .setContentText(subTitle)
             .setWhen(new Date().getTime())
             .setContentTitle(title)
-            .setSubText("Srunning ervice")
             .setContentIntent(pendingIntent)
             .build();
     }
@@ -149,7 +148,7 @@ public class MessageServiceViewModel
 
         serviceContextWrapper.startForeground(
             NOTIFICATION_ID,
-            createNotification("Service running")
+            createNotification(contextWrapper.getString(R.string.service_started), "")
         );
 
         messagesReceiver = new BroadcastReceiver() {
@@ -158,10 +157,7 @@ public class MessageServiceViewModel
                 ArrayList<MessageInfo> messages = intent.getParcelableArrayListExtra(
                     MyAccessibilityService.EXTRA_MESSAGES);
 
-                contextWrapper.notify(
-                    NOTIFICATION_ID,
-                    createNotification("Received messages: " + messages.size())
-                );
+                updateNotification(contextWrapper.getString(R.string.service_messages_received), String.format(contextWrapper.getString(R.string.service_messages_received_prefab), messages.size()));
             }
         };
         IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
@@ -169,6 +165,13 @@ public class MessageServiceViewModel
 
         whatsappInterfaceConnection = new WhatsappInterfaceConnection();
         contextWrapper.bindService(MyAccessibilityService.class, whatsappInterfaceConnection, 0);
+    }
+
+    private void updateNotification(String title, String subTitle) {
+        contextWrapper.notify(
+            NOTIFICATION_ID,
+            createNotification(title, subTitle)
+        );
     }
 
     @Override
@@ -220,6 +223,9 @@ public class MessageServiceViewModel
 
                 @Override
                 public void onFailure(Call<List<WhatMessage>> call, Throwable t) {
+                    String errorMessage = String.format(contextWrapper.getString(R.string.error_retrieving_messages_prefab), t.toString());
+                    contextWrapper.showShortToast(errorMessage);
+                    updateNotification(contextWrapper.getString(R.string.error_retrieving_messages), errorMessage);
                 }
             });
         }

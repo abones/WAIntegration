@@ -8,4 +8,9 @@
     <string name="message_enter_connection">Введите адрес сервера</string>
     <string name="connection_ok">OK</string>
     <string name="connection_cancel">Отмена</string>
+    <string name="error_retrieving_messages_prefab">Ошибка получения сообщений: %1$s</string>
+    <string name="service_started">Служба запущена</string>
+    <string name="service_messages_received">Получены сообщения</string>
+    <string name="service_messages_received_prefab">Получено %1$d сообщений</string>
+    <string name="error_retrieving_messages">Ошибка при получении сообщений</string>
 </resources>
