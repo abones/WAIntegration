@@ -20,7 +20,7 @@ ext {
     versionName = '1.0'
 
     // build tools version
-    buildToolsVersion = '25.0.0'
+    buildToolsVersion = '25.0.2'
 
     // SDK versions
     minSdkVersion = 21 // 4.2
