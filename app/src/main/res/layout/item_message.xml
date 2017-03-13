@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.whatsapp.integration.model.WhatMessage" />
+            type="com.whatsapp.integration.viewmodels.WhatMessageViewModel" />
     </data>
 
     <LinearLayout
@@ -25,8 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
                 android:gravity="center"
-                />
-            <!--android:text="@{viewModel.createdAtString}"-->
+                android:text="@{viewModel.createdAtString}"/>
 
             <LinearLayout
                 android:layout_width="0dp"

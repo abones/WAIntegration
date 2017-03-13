@@ -224,8 +224,11 @@ public class MessageServiceViewModel
                 ) {
                     receivedMessages = response.body();
 
-                    if (onMessagesChanged != null)
+                    if (onMessagesChanged != null) {
                         onMessagesChanged.onMessagesChanged(receivedMessages);
+
+                        updateNotification(contextWrapper.getString(R.string.service_messages_received), String.format(contextWrapper.getString(R.string.service_messages_received_prefab), receivedMessages.size()));
+                    }
                 }
 
                 @Override

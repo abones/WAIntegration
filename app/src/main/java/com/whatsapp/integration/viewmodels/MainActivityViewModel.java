@@ -25,7 +25,10 @@ import com.whatsapp.integration.model.WhatMessage;
 import com.whatsapp.integration.service.IMessageServiceManager;
 import com.whatsapp.integration.service.MessageService;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -39,7 +42,7 @@ public class MainActivityViewModel
 
     private final IMessageServiceManager messageServiceManager;
     private final IPreferences preferences;
-    private RecyclerBindingAdapter<WhatMessage> messagesAdapter;
+    private RecyclerBindingAdapter<WhatMessageViewModel> messagesAdapter;
 
     private final MessageServiceConnection messageServiceConnection = new MessageServiceConnection();
     private final MessageServiceViewModel.IMessagesChanged onMessagesChanged = this::messagesChanged;
@@ -93,7 +96,7 @@ public class MainActivityViewModel
         return "MainActivityViewModel";
     }
 
-    private RecyclerBindingAdapter<WhatMessage> createMessagesAdapter() {
+    private RecyclerBindingAdapter<WhatMessageViewModel> createMessagesAdapter() {
         return new RecyclerBindingAdapter<>(
             null,
             R.layout.item_message,
@@ -103,7 +106,19 @@ public class MainActivityViewModel
     }
 
     private void messagesChanged(Collection<WhatMessage> messages) {
-        messagesAdapter.refresh(messages);
+        List<WhatMessageViewModel> messageViewModels = new ArrayList<>();
+        for (WhatMessage message : messages) {
+            WhatMessageViewModel viewModel = new WhatMessageViewModel(contextWrapper);
+
+            viewModel.setRequest(message.getRequest());
+            viewModel.setReply(message.getReply());
+            viewModel.setCreatedAt(message.getCreatedAt());
+
+            messageViewModels.add(viewModel);
+        }
+
+        Collections.sort(messageViewModels, (vm1, vm2) -> vm2.getCreatedAt().compareTo(vm1.getCreatedAt()));
+        messagesAdapter.refresh(messageViewModels);
         setHasMessages(!messages.isEmpty());
     }
 

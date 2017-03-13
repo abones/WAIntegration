@@ -13,4 +13,6 @@
     <string name="service_messages_received">Получены сообщения</string>
     <string name="service_messages_received_prefab">Получено %1$d сообщений</string>
     <string name="error_retrieving_messages">Ошибка при получении сообщений</string>
+    <string name="item_request_none"><![CDATA[<Нет запроса>]]></string>
+    <string name="item_reply_none"><![CDATA[<Нет ответа>]]></string>
 </resources>

@@ -12,4 +12,6 @@
     <string name="service_messages_received">Messages received</string>
     <string name="service_messages_received_prefab">Received %1$d messages</string>
     <string name="error_retrieving_messages">Error while retrieving messages</string>
+    <string name="item_request_none"><![CDATA[<No request>]]></string>
+    <string name="item_reply_none"><![CDATA[<No reply>]]></string>
 </resources>
