@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 
 import com.rubius.androidshared.abstraction.IServiceContextWrapper;
 import com.rubius.androidshared.dagger.qualifiers.ServiceContext;
-import com.rubius.androidshared.exceptions.NotImplementedException;
 import com.rubius.androidshared.viewmodels.IView;
 import com.rubius.androidshared.viewmodels.ViewModelBase;
 import com.whatsapp.integration.R;
@@ -209,7 +208,7 @@ public class MessageServiceViewModel
         }
 
         public void getMessages() {
-            Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages();
+            Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(1);
 
             call.enqueue(new Callback<List<WhatMessage>>() {
                 @Override
@@ -221,7 +220,6 @@ public class MessageServiceViewModel
 
                 @Override
                 public void onFailure(Call<List<WhatMessage>> call, Throwable t) {
-                    throw new NotImplementedException();
                 }
             });
         }
