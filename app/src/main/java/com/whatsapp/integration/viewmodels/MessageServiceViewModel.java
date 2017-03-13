@@ -204,6 +204,9 @@ public class MessageServiceViewModel
     }
 
     public class Binder extends android.os.Binder {
+        private IMessagesChanged onMessagesChanged;
+        private List<WhatMessage> receivedMessages = new ArrayList<>();
+
         public void sendMessage(QueuedMessage message) {
             messages.add(message);
             if (isServiceConnected)
@@ -214,11 +217,15 @@ public class MessageServiceViewModel
             Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(1);
 
             call.enqueue(new Callback<List<WhatMessage>>() {
+
                 @Override
                 public void onResponse(
                     Call<List<WhatMessage>> call, Response<List<WhatMessage>> response
                 ) {
-                    List<WhatMessage> messages = response.body();
+                    receivedMessages = response.body();
+
+                    if (onMessagesChanged != null)
+                        onMessagesChanged.onMessagesChanged(receivedMessages);
                 }
 
                 @Override
@@ -229,6 +236,19 @@ public class MessageServiceViewModel
                 }
             });
         }
+
+        public void subscribeToMessagesChanged(IMessagesChanged onMessagesChanged) {
+            this.onMessagesChanged = onMessagesChanged;
+            onMessagesChanged.onMessagesChanged(receivedMessages);
+        }
+
+        public void unsubscribeFromMessagesChanged(IMessagesChanged onMessagesChanged) {
+            this.onMessagesChanged = null;
+        }
+    }
+
+    public interface IMessagesChanged {
+        void onMessagesChanged(List<WhatMessage> messages);
     }
 
     // endregion Internal classes

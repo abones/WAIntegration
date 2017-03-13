@@ -21,8 +21,11 @@ import com.whatsapp.integration.BR;
 import com.whatsapp.integration.R;
 import com.whatsapp.integration.activities.MainActivity;
 import com.whatsapp.integration.misc.IPreferences;
+import com.whatsapp.integration.model.WhatMessage;
 import com.whatsapp.integration.service.IMessageServiceManager;
 import com.whatsapp.integration.service.MessageService;
+
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -36,9 +39,10 @@ public class MainActivityViewModel
 
     private final IMessageServiceManager messageServiceManager;
     private final IPreferences preferences;
-    private RecyclerBindingAdapter<String> messagesAdapter;
+    private RecyclerBindingAdapter<WhatMessage> messagesAdapter;
 
     private final MessageServiceConnection messageServiceConnection = new MessageServiceConnection();
+    private final MessageServiceViewModel.IMessagesChanged onMessagesChanged = this::messagesChanged;
 
     @Inject
     public MainActivityViewModel(
@@ -89,13 +93,18 @@ public class MainActivityViewModel
         return "MainActivityViewModel";
     }
 
-    private RecyclerBindingAdapter<String> createMessagesAdapter() {
+    private RecyclerBindingAdapter<WhatMessage> createMessagesAdapter() {
         return new RecyclerBindingAdapter<>(
             null,
-            0,//R.layout.item_exam_result,
-            0,//BR.item,
+            R.layout.item_message,
+            BR.viewModel,
             null
         );
+    }
+
+    private void messagesChanged(Collection<WhatMessage> messages) {
+        messagesAdapter.refresh(messages);
+        setHasMessages(!messages.isEmpty());
     }
 
     // region Properties
@@ -197,7 +206,7 @@ public class MainActivityViewModel
         service.getMessages();
     }
 
-    private static class MessageServiceConnection implements ServiceConnection {
+    private class MessageServiceConnection implements ServiceConnection {
         private MessageServiceViewModel.Binder service;
 
         public MessageServiceViewModel.Binder getService() {
@@ -207,10 +216,12 @@ public class MainActivityViewModel
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             this.service = (MessageServiceViewModel.Binder) service;
+            this.service.subscribeToMessagesChanged(onMessagesChanged);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            this.service.unsubscribeFromMessagesChanged(onMessagesChanged);
             this.service = null;
         }
     }
