@@ -15,7 +15,8 @@
         android:roundIcon="@drawable/ic_whaticon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.whatsapp.integration.activities.MainActivity">
+        <activity android:name="com.whatsapp.integration.activities.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
