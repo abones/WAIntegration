@@ -239,7 +239,7 @@ public class MainActivityViewModel
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            this.service.unsubscribeFromMessagesChanged(onMessagesChanged);
+            this.service.unsubscribeFromMessagesChanged();
             this.service = null;
         }
     }

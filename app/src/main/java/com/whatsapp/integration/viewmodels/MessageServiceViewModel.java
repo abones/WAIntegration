@@ -27,11 +27,16 @@ import com.whatsapp.integration.model.QueuedMessage;
 import com.whatsapp.integration.model.WhatMessage;
 import com.whatsapp.integration.service.MyAccessibilityService;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -55,6 +60,8 @@ public class MessageServiceViewModel
     private final SharedPreferences.OnSharedPreferenceChangeListener onConnectionChangedListener = this::onConnectionChanged;
     private final IBinder messageServiceBinder = new Binder();
     private final IRetrofitWrapper retrofitWrapper;
+    private final ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> pollingTask;
 
     private BroadcastReceiver messagesReceiver;
     private WhatsappInterfaceConnection whatsappInterfaceConnection;
@@ -71,6 +78,8 @@ public class MessageServiceViewModel
         this.serviceContextWrapper = contextWrapper;
         this.preferences = preferences;
         this.retrofitWrapper = retrofitWrapper;
+
+        scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
     // region Connection
@@ -154,7 +163,13 @@ public class MessageServiceViewModel
                 ArrayList<MessageInfo> messages = intent.getParcelableArrayListExtra(
                     MyAccessibilityService.EXTRA_MESSAGES);
 
-                updateNotification(contextWrapper.getString(R.string.service_messages_received), String.format(contextWrapper.getString(R.string.service_messages_received_prefab), messages.size()));
+                updateNotification(
+                    contextWrapper.getString(R.string.service_messages_received),
+                    String.format(
+                        contextWrapper.getString(R.string.service_messages_received_prefab),
+                        messages.size()
+                    )
+                );
             }
         };
         IntentFilter intentFilter = new IntentFilter(MyAccessibilityService.ACTION_RECEIVE_MESSAGES);
@@ -162,6 +177,8 @@ public class MessageServiceViewModel
 
         whatsappInterfaceConnection = new WhatsappInterfaceConnection();
         contextWrapper.bindService(MyAccessibilityService.class, whatsappInterfaceConnection, 0);
+
+        pollingTask = scheduler.scheduleAtFixedRate(this::getMessages, 10L, 10L, TimeUnit.SECONDS);
     }
 
     private void updateNotification(String title, String subTitle) {
@@ -173,6 +190,8 @@ public class MessageServiceViewModel
 
     @Override
     public void onDestroy() {
+        pollingTask.cancel(true);
+        scheduler.shutdownNow();
         preferences.unregisterListener(onConnectionChangedListener);
         contextWrapper.unregisterReceiver(messagesReceiver);
         serviceContextWrapper.stopForeground(true);
@@ -185,6 +204,66 @@ public class MessageServiceViewModel
     }
 
     // endregion Overrides of ViewModelBase
+
+    private List<WhatMessage> receivedMessages = new ArrayList<>();
+    private final List<WeakReference<IMessagesChanged>> messageChangedHandlers = new ArrayList<>();
+
+    private void addMessageChangedHandler(IMessagesChanged messagesChanged) {
+        messageChangedHandlers.add(new WeakReference<>(messagesChanged));
+    }
+
+    private void removeMessageChangedHandler(IMessagesChanged messagesChanged) {
+        WeakReference<IMessagesChanged> foundReference = null;
+        for (WeakReference<IMessagesChanged> handlerReference : messageChangedHandlers)
+            if (handlerReference.get() == messagesChanged) {
+                foundReference = handlerReference;
+                break;
+            }
+
+        if (foundReference != null)
+            messageChangedHandlers.remove(foundReference);
+    }
+
+    private void getMessages() {
+        Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(1);
+
+        call.enqueue(new Callback<List<WhatMessage>>() {
+
+            @Override
+            public void onResponse(
+                Call<List<WhatMessage>> call, Response<List<WhatMessage>> response
+            ) {
+                receivedMessages = response.body();
+
+                updateNotification(
+                    contextWrapper.getString(R.string.service_messages_received),
+                    String.format(
+                        contextWrapper.getString(R.string.service_messages_received_prefab),
+                        receivedMessages.size()
+                    )
+                );
+
+                for (WeakReference<IMessagesChanged> messageChanged : messageChangedHandlers) {
+                    IMessagesChanged actualMessagesChanged = messageChanged.get();
+                    if (actualMessagesChanged != null)
+                        actualMessagesChanged.onMessagesChanged(receivedMessages);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<WhatMessage>> call, Throwable t) {
+                String errorMessage = String.format(
+                    contextWrapper.getString(R.string.error_retrieving_messages_prefab),
+                    t.toString()
+                );
+                contextWrapper.showShortToast(errorMessage);
+                updateNotification(
+                    contextWrapper.getString(R.string.error_retrieving_messages),
+                    errorMessage
+                );
+            }
+        });
+    }
 
     // region Internal classes
 
@@ -202,7 +281,6 @@ public class MessageServiceViewModel
 
     public class Binder extends android.os.Binder {
         private IMessagesChanged onMessagesChanged;
-        private List<WhatMessage> receivedMessages = new ArrayList<>();
 
         public void sendMessage(QueuedMessage message) {
             messages.add(message);
@@ -211,38 +289,17 @@ public class MessageServiceViewModel
         }
 
         public void getMessages() {
-            Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(1);
-
-            call.enqueue(new Callback<List<WhatMessage>>() {
-
-                @Override
-                public void onResponse(
-                    Call<List<WhatMessage>> call, Response<List<WhatMessage>> response
-                ) {
-                    receivedMessages = response.body();
-
-                    if (onMessagesChanged != null) {
-                        onMessagesChanged.onMessagesChanged(receivedMessages);
-
-                        updateNotification(contextWrapper.getString(R.string.service_messages_received), String.format(contextWrapper.getString(R.string.service_messages_received_prefab), receivedMessages.size()));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<WhatMessage>> call, Throwable t) {
-                    String errorMessage = String.format(contextWrapper.getString(R.string.error_retrieving_messages_prefab), t.toString());
-                    contextWrapper.showShortToast(errorMessage);
-                    updateNotification(contextWrapper.getString(R.string.error_retrieving_messages), errorMessage);
-                }
-            });
+            MessageServiceViewModel.this.getMessages();
         }
 
         public void subscribeToMessagesChanged(IMessagesChanged onMessagesChanged) {
             this.onMessagesChanged = onMessagesChanged;
+            addMessageChangedHandler(this.onMessagesChanged);
             onMessagesChanged.onMessagesChanged(receivedMessages);
         }
 
-        public void unsubscribeFromMessagesChanged(IMessagesChanged onMessagesChanged) {
+        public void unsubscribeFromMessagesChanged() {
+            removeMessageChangedHandler(this.onMessagesChanged);
             this.onMessagesChanged = null;
         }
     }
