@@ -25,8 +25,7 @@ public class RetrofitWrapper
 
     private synchronized void setRetrofit(Retrofit retrofit) {
         this.retrofit = retrofit;
-        if (retrofit == null)
-            setWhatMessageService(null);
+        setWhatMessageService(null);
     }
 
     private Retrofit createRetrofit() {
@@ -34,10 +33,14 @@ public class RetrofitWrapper
 
         builder.registerTypeAdapter(WhatMessage.class, new WhatMessageSerializer());
 
-        return new Retrofit.Builder()
-            .baseUrl(connection)
-            .addConverterFactory(GsonConverterFactory.create(builder.create()))
-            .build();
+        try {
+            return new Retrofit.Builder()
+                .baseUrl(connection)
+                .addConverterFactory(GsonConverterFactory.create(builder.create()))
+                .build();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // endregion retrofit
@@ -51,9 +54,12 @@ public class RetrofitWrapper
         if (this.connection == null ? connection == null : this.connection.equals(connection))
             return;
 
-        this.connection = connection;
+        this.connection = connection == null ? null : connection.trim().replace("\n", "").replace(
+            "\r",
+            ""
+        );
 
-        setRetrofit(StringHelper.isNullOrEmpty(connection) ? null : createRetrofit());
+        setRetrofit(StringHelper.isNullOrEmpty(this.connection) ? null : createRetrofit());
     }
 
     // endregion connection
