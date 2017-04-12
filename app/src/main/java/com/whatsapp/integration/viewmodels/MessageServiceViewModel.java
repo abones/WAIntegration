@@ -225,7 +225,7 @@ public class MessageServiceViewModel
     }
 
     private void getMessages() {
-        Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(1);
+        Call<List<WhatMessage>> call = retrofitWrapper.getWhatMessageService().getMessages(2);
 
         call.enqueue(new Callback<List<WhatMessage>>() {
 
@@ -244,9 +244,9 @@ public class MessageServiceViewModel
                 );
 
                 for (WeakReference<IMessagesChanged> messageChanged : messageChangedHandlers) {
-                    IMessagesChanged actualMessagesChanged = messageChanged.get();
-                    if (actualMessagesChanged != null)
-                        actualMessagesChanged.onMessagesChanged(receivedMessages);
+                    IMessagesChanged actualHandler = messageChanged.get();
+                    if (actualHandler != null)
+                        actualHandler.onMessagesChanged(receivedMessages);
                 }
             }
 
