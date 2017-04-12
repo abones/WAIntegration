@@ -117,7 +117,10 @@ public class MainActivityViewModel
             messageViewModels.add(viewModel);
         }
 
-        Collections.sort(messageViewModels, (vm1, vm2) -> vm2.getCreatedAt().compareTo(vm1.getCreatedAt()));
+        Collections.sort(
+            messageViewModels,
+            (vm1, vm2) -> vm2.getCreatedAt().compareTo(vm1.getCreatedAt())
+        );
         messagesAdapter.refresh(messageViewModels);
         setHasMessages(!messages.isEmpty());
     }

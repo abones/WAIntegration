@@ -13,13 +13,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitWrapper
-        implements IRetrofitWrapper {
-
-    private final Object whatMessageServiceLock = new Object();
-    private Retrofit retrofit;
+    implements IRetrofitWrapper {
 
     @Inject
     public RetrofitWrapper() {
+    }
+
+    // region retrofit
+
+    private Retrofit retrofit;
+
+    private synchronized void setRetrofit(Retrofit retrofit) {
+        this.retrofit = retrofit;
+        if (retrofit == null)
+            setWhatMessageService(null);
     }
 
     private Retrofit createRetrofit() {
@@ -28,10 +35,12 @@ public class RetrofitWrapper
         builder.registerTypeAdapter(WhatMessage.class, new WhatMessageSerializer());
 
         return new Retrofit.Builder()
-                .baseUrl(connection)
-                .addConverterFactory(GsonConverterFactory.create(builder.create()))
-                .build();
+            .baseUrl(connection)
+            .addConverterFactory(GsonConverterFactory.create(builder.create()))
+            .build();
     }
+
+    // endregion retrofit
 
     // region connection
 
@@ -44,26 +53,30 @@ public class RetrofitWrapper
 
         this.connection = connection;
 
-        synchronized (whatMessageServiceLock) {
-            whatMessageService = null;
-        }
-
-        if (!StringHelper.isNullOrEmpty(connection))
-            retrofit = createRetrofit();
+        setRetrofit(StringHelper.isNullOrEmpty(connection) ? null : createRetrofit());
     }
 
     // endregion connection
 
+    // region WhatMessageService
+
     private IWhatMessageService whatMessageService;
 
-    @Override
-    public IWhatMessageService getWhatMessageService() {
-        synchronized (whatMessageServiceLock) {
-            if (whatMessageService == null) {
-                whatMessageService = retrofit.create(IWhatMessageService.class);
-            }
-
-            return whatMessageService;
-        }
+    private synchronized void setWhatMessageService(IWhatMessageService whatMessageService) {
+        this.whatMessageService = whatMessageService;
     }
+
+    @Override
+    public synchronized IWhatMessageService getWhatMessageService() {
+        if (whatMessageService == null) {
+            if (retrofit == null)
+                setWhatMessageService(new WhatMessageServiceDummy());
+            else
+                setWhatMessageService(retrofit.create(IWhatMessageService.class));
+        }
+
+        return whatMessageService;
+    }
+
+    // endregion WhatMessageService
 }

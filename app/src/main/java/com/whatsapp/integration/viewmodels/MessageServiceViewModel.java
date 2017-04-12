@@ -75,10 +75,7 @@ public class MessageServiceViewModel
 
     // region Connection
 
-    private String connection;
-
     private void setConnection(String connection) {
-        this.connection = connection;
         retrofitWrapper.setConnection(connection);
     }
 
