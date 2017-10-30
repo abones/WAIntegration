@@ -27,11 +27,6 @@ public class MainActivity extends AppCompatActivityBase<WhatsappIntegrationAppli
     }
 
     @Override
-    public String getPrintPrefix() {
-        return "MainActivity";
-    }
-
-    @Override
     public void releaseViewModel() {
         getTypedApplication().releaseActivityComponent(this.getClass());
     }

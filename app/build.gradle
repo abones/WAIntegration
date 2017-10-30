@@ -1,15 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath "me.tatarka:gradle-retrolambda:$rootProject.ext.versionRetrolambda"
-    }
-}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -43,8 +32,8 @@ android {
     }
 }
 
-retrolambda {
-    javaVersion JavaVersion.VERSION_1_7
+repositories {
+    google()
 }
 
 dependencies {

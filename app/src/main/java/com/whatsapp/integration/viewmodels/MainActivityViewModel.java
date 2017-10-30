@@ -65,7 +65,7 @@ public class MainActivityViewModel
     ) {
         super.onCreate(savedInstanceState, intent);
         messagesAdapter = createMessagesAdapter();
-        recyclerConfiguration = new RecyclerConfiguration();
+        recyclerConfiguration = new RecyclerConfiguration(null);
         recyclerConfiguration.setAdapter(messagesAdapter);
         recyclerConfiguration.setItemAnimator(new DefaultItemAnimator());
     }

@@ -117,7 +117,7 @@ public class MessageServiceViewModel
             FLAG_UPDATE_CURRENT
         );
 
-        return contextWrapper.getNotificationBuilder()
+        return contextWrapper.getNotificationBuilder("MAIN_CHANNEL")
             .setSmallIcon(R.drawable.whaticon_holes)
             .setContentText(subTitle)
             .setWhen(new Date().getTime())
