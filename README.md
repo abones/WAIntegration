@@ -1,0 +1,1 @@
+Daemon application allowing to bridge commands to an external server using popular instant messaging app.
